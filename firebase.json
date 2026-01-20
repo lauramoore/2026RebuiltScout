@@ -41,7 +41,7 @@
     "apphosting": {
       "port": 5002,
       "rootDirectory": "./",
-      "startCommand": "npm run dev-ui"
+      "startCommand": "npm run dev:ui"
     },
     "auth": {
       "port": 9099

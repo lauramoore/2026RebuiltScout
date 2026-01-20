@@ -7,9 +7,11 @@
     "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
-    "dev-ui": "vite --port 5002",
-    "dev": "firebase emulators:start --import=./dev-data --export-on-exit",
-    "build": "vite build",
+    "dev": "npm run build:functions && concurrently \"npm run build:watch --prefix functions\" \"firebase emulators:start --import=./dev-data --export-on-exit\"",
+    "dev:ui": "vite --port 5002",
+    "dev:functions": "npm run serve --prefix functions",
+    "build:ui": "vite build",
+    "build:functions": "npm run build --prefix functions",
     "preview": "vite preview",
     "test:unit": "vitest",
     "lint": "eslint . --fix",

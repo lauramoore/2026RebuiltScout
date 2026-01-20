@@ -1,5 +1,4 @@
 <script setup>
-import Auth from './Auth.vue'
 import {ref, onMounted} from 'vue';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 

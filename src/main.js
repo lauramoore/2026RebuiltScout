@@ -9,8 +9,8 @@ import { getAuth } from 'firebase/auth'
 const firebaseConfig = {
     apiKey: 'fake-api-key',
     authDomain: 'localhost',
-    projectId: 'defield-firebase',
-    storageBucket: 'defield-firebase.appspot.com',
+    projectId: '2974-rebuilt-scout',
+    storageBucket: '2974-rebuilt-scout.appspot.com',
     messagingSenderId: '1234567890',
     appId: '1:1234567890:web:abcdef123456'
 }

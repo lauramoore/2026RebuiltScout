@@ -7,7 +7,7 @@
     "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
-    "dev-ui": "vite",
+    "dev-ui": "vite --port 5002",
     "dev": "firebase emulators:start --import=./dev-data --export-on-exit",
     "build": "vite build",
     "preview": "vite preview",

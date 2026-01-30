@@ -4,6 +4,10 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
+import { createRouter, createWebHistory } from 'vue-router'
+import ScoutForm from './components/scout/ScoutForm.vue'
+import ScoutHome from './components/scout/ScoutHome.vue'
+
 
 // these are local dev only - do not use in production
 const firebaseConfig = {
@@ -21,8 +25,20 @@ if (window.location.hostname === 'localhost') {
     connectAuthEmulator(getAuth(firebaseApp), 'http://localhost:9099');
   });
 }
+
+const routes = [
+  { path: '/', component: ScoutHome },
+  { path: '/scout/:match/:team', name: 'scout', component: ScoutForm },
+]
+
+export const router = createRouter({
+  history: createWebHistory(),
+  routes,
+})
+
+
 const auth = getAuth(firebaseApp)
-const app = createApp(App)
+const app = createApp(App).use(router)
 app.provide('$auth', auth)
 
 app.mount('#app')

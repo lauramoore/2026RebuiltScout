@@ -7,12 +7,17 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-import {setGlobalOptions} from "firebase-functions";
-import {onRequest} from "firebase-functions/https";
-import * as logger from "firebase-functions/logger";
+import { setGlobalOptions } from "firebase-functions";
+import { defineSecret, defineInt } from "firebase-functions/params";
+import { getFirestore } from "firebase-admin/firestore";
+import { initializeApp } from "firebase-admin/app";
+import { getEventSchedule, getEvents } from "./first-events/index.js";
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
+initializeApp();
+
+const db = getFirestore();
+const apiToken = defineSecret("FIRST_API_TOKEN");
+const season = defineInt('SEASON', { default: 2026 });
 
 // For cost control, you can set the maximum number of containers that can be
 // running at the same time. This helps mitigate the impact of unexpected
@@ -26,7 +31,7 @@ import * as logger from "firebase-functions/logger";
 // this will be the maximum concurrent request count.
 setGlobalOptions({ maxInstances: 10 });
 
-export const helloWorld = onRequest((request, response) => {
-   logger.info("Hello logs!", {structuredData: true});
-   response.send("Hello from Firebase!");
-});
+export const events =  {
+  getEventSchedule: getEventSchedule(db, apiToken, season),
+  getEvents: getEvents(db, apiToken, season),
+};

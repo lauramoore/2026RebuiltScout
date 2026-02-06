@@ -1,0 +1,37 @@
+import { initializeApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth';
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+
+// these are local dev only - do not use in production
+const firebaseConfig = {
+    apiKey: 'fake-api-key',
+    authDomain: 'localhost',
+    projectId: '2974-rebuilt-scout',
+    storageBucket: '2974-rebuilt-scout.appspot.com',
+    messagingSenderId: '1234567890',
+    appId: '1:1234567890:web:abcdef123456'
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+
+const auth = getAuth(firebaseApp);
+const functions = getFunctions(firebaseApp);
+
+const authProvider = new GoogleAuthProvider();
+authProvider.setCustomParameters({
+  hd: "waltonrobotics.org" //ensure everybody uses the correct domain
+});
+
+if (window.location.hostname === 'localhost') {
+  connectAuthEmulator(auth, 'http://localhost:9099');
+  connectFunctionsEmulator(functions, 'localhost', 5001);
+}
+
+// Re-export what's needed in other parts of the app
+export {
+  auth,
+  functions,
+  authProvider,
+  onAuthStateChanged,
+  GoogleAuthProvider
+};

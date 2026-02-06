@@ -32,6 +32,10 @@
     ],
     "rewrites": [
       {
+        "source": "/api/getEventSchedule/**",
+        "function": "events-getEventSchedule"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

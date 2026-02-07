@@ -19,7 +19,7 @@ const routes = [
     },
     {
       path: '/scout/:match/:team',
-      name: 'scout',
+      name: 'scout-form',
       component: () => import('./views/ScoutView.vue'),
       meta: { requiresAuth: true }
     }

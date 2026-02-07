@@ -1,19 +1,68 @@
 <template>
   <h1>Auton</h1>
-  <ScoreCycle v-model="model"/>
+  <div>
+    <button @click="previousCycle" :disabled="currentIndex === 0" type="button">Previous Cycle</button>
+    <span>Cycle {{ currentIndex + 1 }} of {{ (model || []).length }}</span>
+    <button @click="nextCycle" :disabled="currentIndex >= (model || []).length - 1" type="button">Next Cycle</button>
+    <button @click="addCycle" type="button">New Cycle</button>
+  </div>
+  <ScoreCycle v-model="currentCycleModel"/>
 </template>
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import ScoreCycle from './ScoreCycle.vue';
 
 const props = defineProps({
-  modelValue: Object
+  modelValue: Array
 });
 
 const emit = defineEmits(['update:modelValue']);
 
 const model = computed({
-  get: () => props.modelValue,
+  get: () => props.modelValue || [],
   set: (value) => emit('update:modelValue', value)
 });
+
+const currentIndex = ref(0);
+
+watch(model, (newModel) => {
+    if (!newModel || newModel.length === 0) {
+        model.value = [{}];
+        currentIndex.value = 0;
+    } else {
+        currentIndex.value = newModel.length > 0 ? newModel.length - 1 : 0;
+    }
+}, { immediate: true });
+
+const currentCycleModel = computed({
+  get: () => {
+    return (model.value || [])[currentIndex.value] || {};
+  },
+  set: (value) => {
+    const newCycles = [...(model.value || [])];
+    newCycles[currentIndex.value] = value;
+    model.value = newCycles;
+  }
+});
+
+function addCycle() {
+  const cycles = model.value || [{}];
+  const lastCycle = cycles[cycles.length - 1] || {};
+  const newCycles = [...cycles, { ...lastCycle }];
+  model.value = newCycles;
+  currentIndex.value = newCycles.length - 1;
+}
+
+function previousCycle() {
+  if (currentIndex.value > 0) {
+    currentIndex.value--;
+  }
+}
+
+function nextCycle() {
+  const cycles = model.value || [];
+  if (currentIndex.value < cycles.length - 1) {
+    currentIndex.value++;
+  }
+}
 </script>

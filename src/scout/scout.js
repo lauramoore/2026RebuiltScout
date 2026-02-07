@@ -55,22 +55,23 @@ const routes = [
       {
         path: 'endgame',
         component: () => import('./components/ScoutEndgame.vue'),
+        // Redirect to a default child route for endgame
         redirect: to => {
-          return {path: 'scout/${to.params.match}/${to.params.team}/endgame'}
+          return { path: `/scout/${to.params.match}/${to.params.team}/endgame/scoring` };
         },
          children: [
           {
-            path: 'passing', // -> /scout/:match/:team/teleop/passing
+            path: 'passing', // -> /scout/:match/:team/endgame/passing
             component: () => import('./components/PassingCycle.vue'),
             meta: { title: 'Passing/Stockpiling' }
           },
           {
-            path: 'scoring', // -> /scout/:match/:team/teleop/scoring
+            path: 'scoring', // -> /scout/:match/:team/endgame/scoring
             component: () => import('./components/ScoreCycle.vue'),
             meta: { title: 'Scoring' }
           },
           {
-            path: 'defense', // -> /scout/:match/:team/teleop/defense
+            path: 'defense', // -> /scout/:match/:team/endgame/defense
             component: () => import('./components/DefenseCycle.vue'),
             meta: { title: 'Defense' }
           }
@@ -78,10 +79,8 @@ const routes = [
       },
       {
         path: "observations",
-        compontent: () => import('./components/ScoutObservations.vue'),
-        redirect: to => {
-          return {path: '${to.params.match}/${to.params.team}/endgame'}
-        }
+        component: () => import('./components/ScoutObservations.vue'),
+        meta: { title: 'Observations' }
       }
 
     ]

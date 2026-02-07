@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth';
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
 // these are local dev only - do not use in production
@@ -16,6 +17,8 @@ const firebaseApp = initializeApp(firebaseConfig);
 
 const auth = getAuth(firebaseApp);
 const functions = getFunctions(firebaseApp);
+const db = getFirestore(firebaseApp);
+
 
 const authProvider = new GoogleAuthProvider();
 authProvider.setCustomParameters({
@@ -25,6 +28,7 @@ authProvider.setCustomParameters({
 if (window.location.hostname === 'localhost') {
   connectAuthEmulator(auth, 'http://localhost:9099');
   connectFunctionsEmulator(functions, 'localhost', 5001);
+  connectFirestoreEmulator(db, 'localhost', 8080 )
 }
 
 
@@ -46,6 +50,7 @@ if (window.location.hostname === 'localhost') {
 export {
   auth,
   functions,
+  db,
   authProvider,
   onAuthStateChanged,
   GoogleAuthProvider,

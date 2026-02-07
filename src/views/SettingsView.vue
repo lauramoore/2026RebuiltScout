@@ -6,20 +6,13 @@
 </template>
 
 <script setup>
-import { inject } from 'vue';
-const $api = inject('$api');
 
 const changeUser = () => {
 
 };
 
 const schedule = async () => {
-  try {
-    const result = await $api.refreshSchedule();
-    console.log('Match schedule updated:', result);
-  } catch (error) {
-    console.error('Error calling firebase function:', error);
-  }
+ 
 
 };
 </script>

@@ -1,12 +1,19 @@
 <template>
   <h1>Teleop</h1>
-  <div>Collecting</div>
-  <div>Shooting</div>
-  <div>Defending</div>
-  <div>Passing</div>
-  <div>Observations</div>
-  <button>Back</button><button>Next</button>
+  <ScoutCycle v-model="model"/>
 </template>
-<script>
-export default {};
+<script setup>
+import { computed } from 'vue';
+import ScoutCycle from  "./ScoutCycle.vue";
+
+const props = defineProps({
+  modelValue: Object
+});
+
+const emit = defineEmits(['update:modelValue']);
+
+const model = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value)
+});
 </script>

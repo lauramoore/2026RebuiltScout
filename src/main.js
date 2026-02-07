@@ -4,6 +4,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import { auth, onAuthStateChanged } from './firebase'
+import scoutModule from './scout/scout'
 
 const routes = [
     {
@@ -17,12 +18,7 @@ const routes = [
       component: () => import('./views/HomeView.vue'),
       meta: { requiresAuth: true } // Mark this as protected
     },
-    {
-      path: '/scout/:match/:team',
-      name: 'scout-form',
-      component: () => import('./views/ScoutView.vue'),
-      meta: { requiresAuth: true }
-    }
+    ...scoutModule.scoutRoutes
 ]
 
 export const router = createRouter({

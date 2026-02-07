@@ -1,5 +1,5 @@
 <script setup>
-import ScoutHome from '../components/scout/ScoutHome.vue'
+import ScoutHome from '../scout/ScoutHome.vue'
 import SettingsView from './SettingsView.vue';
 </script>
 

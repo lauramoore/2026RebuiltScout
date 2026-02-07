@@ -22,10 +22,10 @@ import { db } from '../firebase.js';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
-import ScoutAuton from '../components/scout/ScoutAuton.vue';
-import ScoutTeleop from '../components/scout/ScoutTeleop.vue';
-import ScoutEndgame from '../components/scout/ScoutEndgame.vue';
-import ScoutObservations from '@/components/scout/ScoutObservations.vue';
+import ScoutAuton from './components/ScoutAuton.vue';
+import ScoutTeleop from './components/ScoutTeleop.vue';
+import ScoutEndgame from './components/ScoutEndgame.vue';
+import ScoutObservations from './components/ScoutObservations.vue';
 
 const route = useRoute();
 const router = useRouter();

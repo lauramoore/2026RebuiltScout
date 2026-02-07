@@ -28,7 +28,7 @@
 </template>
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import { db } from '../../firebase.js';
+import { db } from '../firebase.js';
 import { query, collection, orderBy, onSnapshot, doc, setDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'vue-router';

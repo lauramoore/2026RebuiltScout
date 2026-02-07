@@ -16,6 +16,12 @@ const routes = [
       name: 'home',
       component: () => import('./views/HomeView.vue'),
       meta: { requiresAuth: true } // Mark this as protected
+    },
+    {
+      path: '/scout/:match/:team',
+      name: 'scout',
+      component: () => import('./views/ScoutView.vue'),
+      meta: { requiresAuth: true }
     }
 ]
 
@@ -47,21 +53,5 @@ router.beforeEach(async (to, from, next) => {
   }
 });
 
-const firebaseApi = {
-  refreshSchedule: async () => {
-    const response = await fetch('/api/getEventSchedule');
-    if (!response.ok) {
-      // Handle API errors more gracefully if needed
-      const errorText = await response.text();
-      throw new Error(`API request failed with status ${response.status}: ${errorText}`);
-    }
-    // httpsCallable automatically unwraps a 'data' property.
-    // With fetch, you get the raw body, so you parse it as JSON.
-    return response.status
-  }
-}
-
 const app = createApp(App).use(router);
-app.provide('$auth', auth)
-app.provide('$api', firebaseApi)
 app.mount('#app')

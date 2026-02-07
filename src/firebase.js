@@ -27,11 +27,27 @@ if (window.location.hostname === 'localhost') {
   connectFunctionsEmulator(functions, 'localhost', 5001);
 }
 
+
+
+ async function refreshSchedule() {
+    const response = await fetch('/api/getEventSchedule');
+    if (!response.ok) {
+      // Handle API errors more gracefully if needed
+      const errorText = await response.text();
+      throw new Error(`API request failed with status ${response.status}: ${errorText}`);
+    }
+    // httpsCallable automatically unwraps a 'data' property.
+    // With fetch, you get the raw body, so you parse it as JSON.
+    return response.status
+  }
+
+
 // Re-export what's needed in other parts of the app
 export {
   auth,
   functions,
   authProvider,
   onAuthStateChanged,
-  GoogleAuthProvider
+  GoogleAuthProvider,
+  refreshSchedule
 };

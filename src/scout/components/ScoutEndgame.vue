@@ -19,7 +19,7 @@
   </div>
   <h2>Additional Fuel</h2>
    <Passing v-model="model"/>
-   <Scoring v-model="model" />
+   <Scogit ring v-model="model" />
 </template>
 <script setup>
 import { computed } from 'vue';

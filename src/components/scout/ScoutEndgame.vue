@@ -18,11 +18,13 @@
     </div>
   </div>
   <h2>Additional Fuel</h2>
-   <ScoutCycle v-model="model"/>
+   <Passing v-model="model"/>
+   <Scoring v-model="model" />
 </template>
 <script setup>
 import { computed } from 'vue';
-import ScoutCycle from './ScoutCycle.vue';
+import Passing from './PassingCycle.vue';
+import Scoring from './ScoreCycle.vue';
 
 const props = defineProps({
   modelValue: Object

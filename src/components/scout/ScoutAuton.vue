@@ -1,10 +1,10 @@
 <template>
-  <h1>Teleop</h1>
-  <ScoutCycle v-model="model"/>
+  <h1>Auton</h1>
+  <ScoreCycle v-model="model"/>
 </template>
 <script setup>
 import { computed } from 'vue';
-import ScoutCycle from './ScoutCycle.vue';
+import ScoreCycle from './ScoreCycle.vue';
 
 const props = defineProps({
   modelValue: Object

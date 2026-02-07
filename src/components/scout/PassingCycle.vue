@@ -2,9 +2,6 @@
   <h3>Collection</h3>
   <div>
     <label>
-      <input type="radio" value="home" v-model="collectionLocation" /> Home
-    </label>
-    <label>
       <input type="radio" value="neutral" v-model="collectionLocation" /> Neutral
     </label>
     <label>
@@ -37,14 +34,16 @@
       <input type="radio" value="neutral" v-model="emptyingLocation" /> Neutral
     </label>
     <label>
-      <input type="radio" value="hub" v-model="emptyingLocation" /> Hub
-    </label>
-    <label>
       <input type="radio" value="depot" v-model="emptyingLocation" /> Depot
     </label>
     <label>
       <input type="radio" value="outpost" v-model="emptyingLocation" /> Outpost
     </label>
+      <div>
+    <label>
+      <input type="checkbox" value="true" v-model="mobileScoring" /> Shot on the Move
+    </label>
+  </div>
   </div>
   <div>
     <label>
@@ -62,10 +61,10 @@
       <input type="radio" value="wild" v-model="accuracy" /> wild
     </label>
     <label>
-      <input type="radio" value="decent" v-model="accuracy" /> decent
+      <input type="radio" value="decent" v-model="accuracy" /> ballpark
     </label>
     <label>
-      <input type="radio" value="precise" v-model="accuracy" /> precise
+      <input type="radio" value="precise" v-model="accuracy" /> bullseye
     </label>
   </div>
   <div>

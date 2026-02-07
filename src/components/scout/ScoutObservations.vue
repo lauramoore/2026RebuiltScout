@@ -2,23 +2,29 @@
   <h1>Observations</h1>
   <h3>Categories</h3>
   <div>
-    <label>
-      <input type="checkbox" value="fast" v-model="categories" /> Fast
+      <label>
+      <input type="checkbox" value="efficient" v-model="categories" />Trench
     </label>
     <label>
-      <input type="checkbox" value="agile" v-model="categories" /> Agile
+      <input type="checkbox" value="unreliable" v-model="categories" />Bump
     </label>
     <label>
-      <input type="checkbox" value="clunky" v-model="categories" /> Clunky
+      <input type="checkbox" value="fast" v-model="categories" />Blocked Partners
     </label>
     <label>
-      <input type="checkbox" value="sturdy" v-model="categories" /> Sturdy
+      <input type="checkbox" value="agile" v-model="categories" />Broke Down
     </label>
     <label>
-      <input type="checkbox" value="efficient" v-model="categories" /> Efficient
+      <input type="checkbox" value="clunky" v-model="categories" />Slow
     </label>
     <label>
-      <input type="checkbox" value="unreliable" v-model="categories" /> Unreliable
+      <input type="checkbox" value="sturdy" v-model="categories" />Escape Artist
+    </label>
+    <label>
+      <input type="checkbox" value="sturdy" v-model="categories" />Sniper
+    </label>
+     <label>
+      <input type="checkbox" value="sturdy" v-model="categories" />Dump Truck
     </label>
   </div>
   <h3>Notes</h3>

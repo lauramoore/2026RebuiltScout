@@ -18,15 +18,6 @@
     </div>
   </div>
   <h2>Additional Fuel</h2>
-   <h3>Passing</h3>
-    <div>
-        <button @click="previousPassingCycle" :disabled="passingCurrentIndex === 0" type="button">Previous Cycle</button>
-        <span>Cycle {{ passingCurrentIndex + 1 }} of {{ (model.passing || []).length }}</span>
-        <button @click="nextPassingCycle" :disabled="passingCurrentIndex >= (model.passing || []).length - 1" type="button">Next Cycle</button>
-        <button @click="addPassingCycle" type="button">New Cycle</button>
-    </div>
-    <Passing v-model="currentPassingCycle"/>
-
     <h3>Scoring</h3>
     <div>
         <button @click="previousScoringCycle" :disabled="scoringCurrentIndex === 0" type="button">Previous Cycle</button>
@@ -35,21 +26,10 @@
         <button @click="addScoringCycle" type="button">New Cycle</button>
     </div>
     <Scoring v-model="currentScoringCycle" />
-
-    <h3>Defense</h3>
-    <div>
-        <button @click="previousDefenseCycle" :disabled="defenseCurrentIndex === 0" type="button">Previous Cycle</button>
-        <span>Cycle {{ defenseCurrentIndex + 1 }} of {{ (model.defense || []).length }}</span>
-        <button @click="nextDefenseCycle" :disabled="defenseCurrentIndex >= (model.defense || []).length - 1" type="button">Next Cycle</button>
-        <button @click="addDefenseCycle" type="button">New Cycle</button>
-    </div>
-    <Defense v-model="currentDefenseCycle" />
 </template>
 <script setup>
 import { computed, ref, watch } from 'vue';
-import Passing from './PassingCycle.vue';
 import Scoring from './ScoreCycle.vue';
-import Defense from './DefenseCycle.vue';
 
 const props = defineProps({
   modelValue: Object
@@ -71,46 +51,6 @@ const climbAborted = computed({
   get: () => model.value.climbAborted,
   set: (value) => { model.value = { ...model.value, climbAborted: value }; }
 });
-
-// --- Passing Cycles ---
-const passingCurrentIndex = ref(0);
-
-watch(() => model.value.passing, (newCycles) => {
-    if (!newCycles || newCycles.length === 0) {
-        model.value = { ...model.value, passing: [{}] };
-    }
-    passingCurrentIndex.value = (model.value.passing?.length || 1) - 1;
-}, { immediate: true });
-
-const currentPassingCycle = computed({
-  get: () => (model.value.passing || [])[passingCurrentIndex.value] || {},
-  set: (value) => {
-    const newCycles = [...(model.value.passing || [])];
-    newCycles[passingCurrentIndex.value] = value;
-    model.value = { ...model.value, passing: newCycles };
-  }
-});
-
-function addPassingCycle() {
-  const cycles = model.value.passing || [{}];
-  const lastCycle = cycles[cycles.length - 1] || {};
-  const newCycles = [...cycles, { ...lastCycle }];
-  model.value = { ...model.value, passing: newCycles };
-  passingCurrentIndex.value = newCycles.length - 1;
-}
-
-function previousPassingCycle() {
-  if (passingCurrentIndex.value > 0) {
-    passingCurrentIndex.value--;
-  }
-}
-
-function nextPassingCycle() {
-  const cycles = model.value.passing || [];
-  if (passingCurrentIndex.value < cycles.length - 1) {
-    passingCurrentIndex.value++;
-  }
-}
 
 // --- Scoring Cycles ---
 const scoringCurrentIndex = ref(0);
@@ -152,43 +92,5 @@ function nextScoringCycle() {
   }
 }
 
-// --- Defense Cycles ---
-const defenseCurrentIndex = ref(0);
 
-watch(() => model.value.defense, (newCycles) => {
-    if (!newCycles || newCycles.length === 0) {
-        model.value = { ...model.value, defense: [{}] };
-    }
-    defenseCurrentIndex.value = (model.value.defense?.length || 1) - 1;
-}, { immediate: true });
-
-const currentDefenseCycle = computed({
-  get: () => (model.value.defense || [])[defenseCurrentIndex.value] || {},
-  set: (value) => {
-    const newCycles = [...(model.value.defense || [])];
-    newCycles[defenseCurrentIndex.value] = value;
-    model.value = { ...model.value, defense: newCycles };
-  }
-});
-
-function addDefenseCycle() {
-  const cycles = model.value.defense || [{}];
-  const lastCycle = cycles[cycles.length - 1] || {};
-  const newCycles = [...cycles, { ...lastCycle }];
-  model.value = { ...model.value, defense: newCycles };
-  defenseCurrentIndex.value = newCycles.length - 1;
-}
-
-function previousDefenseCycle() {
-  if (defenseCurrentIndex.value > 0) {
-    defenseCurrentIndex.value--;
-  }
-}
-
-function nextDefenseCycle() {
-  const cycles = model.value.defense || [];
-  if (defenseCurrentIndex.value < cycles.length - 1) {
-    defenseCurrentIndex.value++;
-  }
-}
 </script>

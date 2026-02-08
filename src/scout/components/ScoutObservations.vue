@@ -3,28 +3,28 @@
   <h3>Categories</h3>
   <div>
       <label>
-      <input type="checkbox" value="efficient" v-model="categories" />Trench
+      <input type="checkbox" value="trench" v-model="categories" />Trench
     </label>
     <label>
-      <input type="checkbox" value="unreliable" v-model="categories" />Bump
+      <input type="checkbox" value="bump" v-model="categories" />Bump
     </label>
     <label>
-      <input type="checkbox" value="fast" v-model="categories" />Blocked Partners
+      <input type="checkbox" value="inTheWay" v-model="categories" />Blocked Partners
     </label>
     <label>
-      <input type="checkbox" value="agile" v-model="categories" />Broke Down
+      <input type="checkbox" value="broken" v-model="categories" />Broke Down
     </label>
     <label>
-      <input type="checkbox" value="clunky" v-model="categories" />Slow
+      <input type="checkbox" value="slow" v-model="categories" />Slow
     </label>
     <label>
-      <input type="checkbox" value="sturdy" v-model="categories" />Escape Artist
+      <input type="checkbox" value="avoidsDefense" v-model="categories" />Escape Artist
     </label>
     <label>
-      <input type="checkbox" value="sturdy" v-model="categories" />Sniper
+      <input type="checkbox" value="sniper" v-model="categories" />Sniper
     </label>
      <label>
-      <input type="checkbox" value="sturdy" v-model="categories" />Dump Truck
+      <input type="checkbox" value="bigdumper" v-model="categories" />Dump Truck
     </label>
   </div>
   <h3>Notes</h3>

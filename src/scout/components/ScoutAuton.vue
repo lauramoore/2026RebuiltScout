@@ -2,8 +2,8 @@
   <h1>Auton</h1>
   <div>
     <button @click="previousCycle" :disabled="currentIndex === 0" type="button">Previous Cycle</button>
-    <span>Cycle {{ currentIndex + 1 }} of {{ (model || []).length }}</span>
-    <button @click="nextCycle" :disabled="currentIndex >= (model || []).length - 1" type="button">Next Cycle</button>
+    <span>Cycle {{ currentIndex + 1 }} of {{ (model.scoring || []).length }}</span>
+    <button @click="nextCycle" :disabled="currentIndex >= (model.scoring || []).length - 1" type="button">Next Cycle</button>
     <button @click="addCycle" type="button">New Cycle</button>
   </div>
   <ScoreCycle v-model="currentCycleModel"/>
@@ -13,43 +13,41 @@ import { computed, ref, watch } from 'vue';
 import ScoreCycle from './ScoreCycle.vue';
 
 const props = defineProps({
-  modelValue: Array
+  modelValue: Object
 });
 
 const emit = defineEmits(['update:modelValue']);
 
 const model = computed({
-  get: () => props.modelValue || [],
+  get: () => props.modelValue || {},
   set: (value) => emit('update:modelValue', value)
 });
 
 const currentIndex = ref(0);
 
-watch(model, (newModel) => {
-    if (!newModel || newModel.length === 0) {
-        model.value = [{}];
-        currentIndex.value = 0;
-    } else {
-        currentIndex.value = newModel.length > 0 ? newModel.length - 1 : 0;
+watch(() => model.value.scoring, (newCycles) => {
+    if (!newCycles || newCycles.length === 0) {
+        model.value = { ...model.value, scoring: [{}] };
     }
+    currentIndex.value = (model.value.scoring?.length || 1) - 1;
 }, { immediate: true });
 
 const currentCycleModel = computed({
   get: () => {
-    return (model.value || [])[currentIndex.value] || {};
+    return (model.value.scoring || [])[currentIndex.value] || {};
   },
   set: (value) => {
-    const newCycles = [...(model.value || [])];
+    const newCycles = [...(model.value.scoring || [])];
     newCycles[currentIndex.value] = value;
-    model.value = newCycles;
+    model.value = { ...model.value, scoring: newCycles };
   }
 });
 
 function addCycle() {
-  const cycles = model.value || [{}];
+  const cycles = model.value.scoring || [{}];
   const lastCycle = cycles[cycles.length - 1] || {};
   const newCycles = [...cycles, { ...lastCycle }];
-  model.value = newCycles;
+  model.value = { ...model.value, scoring: newCycles };
   currentIndex.value = newCycles.length - 1;
 }
 
@@ -60,7 +58,7 @@ function previousCycle() {
 }
 
 function nextCycle() {
-  const cycles = model.value || [];
+  const cycles = model.value.scoring || [];
   if (currentIndex.value < cycles.length - 1) {
     currentIndex.value++;
   }

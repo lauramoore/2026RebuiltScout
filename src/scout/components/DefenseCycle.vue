@@ -14,30 +14,30 @@
       <input type="radio" value="outpost" v-model="defenseLocation" /> Outpost
     </label>
     <label>
-      <input type="radio" value="outpost" v-model="defenseLocation" /> Home
+      <input type="radio" value="home" v-model="defenseLocation" /> Home
     </label>
   </div>
   <div>
     <label>
-      <input type="radio" value="low" v-model="effective" /> minor
+      <input type="radio" value="1" v-model="effective" /> minor
     </label>
     <label>
-      <input type="radio" value="medium" v-model="effective" /> decent
+      <input type="radio" value="3" v-model="effective" /> decent
     </label>
     <label>
-      <input type="radio" value="full" v-model="effective" /> excellent
+      <input type="radio" value="7" v-model="effective" /> excellent
     </label>
   </div>
   <h3>Penaties</h3>
   <div>
     <label>
-      <input type="radio" value="home" v-model="penalties" /> None
+      <input type="radio" value="0" v-model="penalties" /> None
     </label>
     <label>
-      <input type="radio" value="neutral" v-model="penalties" /> 1-2
+      <input type="radio" value="1" v-model="penalties" /> 1-2
     </label>
     <label>
-      <input type="radio" value="depot" v-model="penalties" /> 3+
+      <input type="radio" value="5" v-model="penalties" /> 3+
     </label>
     <div>
     <label>

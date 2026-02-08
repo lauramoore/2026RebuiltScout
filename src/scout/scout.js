@@ -9,18 +9,17 @@ const routes = [
     meta: { requiresAuth: true },
     // Redirect to the auton section by default when entering a scout form
     redirect: to => {
-      return { path: `/scout/${to.params.match}/${to.params.team}/auton` };
+      // Using a named route is more robust than constructing the path manually.
+      return { name: 'scout-auton', params: to.params };
     },
     children: [
-      { path: 'auton',
+      { path: 'auton', // relative path -> /scout/:match/:team/auton
+        name: 'scout-auton',
         component: () => import('./components/ScoutAuton.vue') ,
-          redirect: to => {
-          // `to.params` will have `match` and `team` from the parent route
-          return { path: `/scout/${to.params.match}/${to.params.team}/auton/scoring` };
-        },
         children: [
         {
-            path: 'scoring', // -> /scout/:match/:team/teleop/scoring
+            path: 'scoring', // -> /scout/:match/:team/auton/scoring
+            name: 'scout-auton-scoring',
             component: () => import('./components/ScoreCycle.vue'),
             meta: { title: 'Scoring' }
           }
@@ -28,57 +27,17 @@ const routes = [
       },
       {
         path: 'teleop', // relative path -> /scout/:match/:team/teleop
-        component: () => import('./components/ScoutTeleop.vue'),
-        // Redirect to a default child route for teleop
-        redirect: to => {
-          // `to.params` will have `match` and `team` from the parent route
-          return { path: `/scout/${to.params.match}/${to.params.team}/teleop/scoring` };
-        },
-        children: [
-          {
-            path: 'passing', // -> /scout/:match/:team/teleop/passing
-            component: () => import('./components/PassingCycle.vue'),
-            meta: { title: 'Passing/Stockpiling' }
-          },
-          {
-            path: 'scoring', // -> /scout/:match/:team/teleop/scoring
-            component: () => import('./components/ScoreCycle.vue'),
-            meta: { title: 'Scoring' }
-          },
-          {
-            path: 'defense', // -> /scout/:match/:team/teleop/defense
-            component: () => import('./components/DefenseCycle.vue'),
-            meta: { title: 'Defense' }
-          }
-        ]
+        name: 'scout-teleop',
+        component: () => import('./components/ScoutTeleop.vue')
       },
       {
         path: 'endgame',
-        component: () => import('./components/ScoutEndgame.vue'),
-        // Redirect to a default child route for endgame
-        redirect: to => {
-          return { path: `/scout/${to.params.match}/${to.params.team}/endgame/scoring` };
-        },
-         children: [
-          {
-            path: 'passing', // -> /scout/:match/:team/endgame/passing
-            component: () => import('./components/PassingCycle.vue'),
-            meta: { title: 'Passing/Stockpiling' }
-          },
-          {
-            path: 'scoring', // -> /scout/:match/:team/endgame/scoring
-            component: () => import('./components/ScoreCycle.vue'),
-            meta: { title: 'Scoring' }
-          },
-          {
-            path: 'defense', // -> /scout/:match/:team/endgame/defense
-            component: () => import('./components/DefenseCycle.vue'),
-            meta: { title: 'Defense' }
-          }
-        ]
+        name: 'scout-endgame',
+        component: () => import('./components/ScoutEndgame.vue')
       },
       {
-        path: "observations",
+        path: "observations", // relative path -> /scout/:match/:team/observations
+        name: 'scout-observations',
         component: () => import('./components/ScoutObservations.vue'),
         meta: { title: 'Observations' }
       }

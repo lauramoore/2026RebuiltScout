@@ -1,31 +1,41 @@
 <template>
   <div v-if="error" class="error-message">{{ error }}</div>
   <div v-else>
-    <h1>Match #{{ route.params.match }} Team #{{ route.params.team }}</h1>
-    <button type="submit" :disabled="isSaving">
+    <header>
+      <h1>Match #{{ route.params.match }} Team #{{ route.params.team }}</h1>
+      <nav>
+        <!-- Use named routes for robust navigation -->
+        <router-link :to="{ name: 'scout-auton', params: route.params }">Auton</router-link>
+        <router-link :to="{ name: 'scout-teleop', params: route.params }">Teleop</router-link>
+        <router-link :to="{ name: 'scout-endgame', params: route.params }">Endgame</router-link>
+        <router-link :to="{ name: 'scout-observations', params: route.params }">Observations</router-link>
+      </nav>
+    </header>
+
+    <form @submit.prevent="saveScoutData">
+      <!--
+        The router will render the correct component here (ScoutAuton, ScoutTeleop, etc.).
+        We use the v-slot API to pass the correct v-model to the rendered component.
+      -->
+      <router-view v-slot="{ Component }">
+        <component :is="Component" v-model="currentModel" />
+      </router-view>
+
+      <button type="submit" :disabled="isSaving">
         {{ isSaving ? 'Saving...' : 'Save' }}
       </button>
-    <form @submit.prevent="saveScoutData">
-      <!-- Assuming these components use v-model to bind to the formData properties -->
-      <ScoutAuton v-model="formData.auton" />
-      <ScoutTeleop v-model="formData.teleop" />
-      <ScoutEndgame v-model="formData.endgame" />
-      <ScoutObservations v-model="formData.observations" />
     </form>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { db } from '../firebase.js';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
-import ScoutAuton from './components/ScoutAuton.vue';
-import ScoutTeleop from './components/ScoutTeleop.vue';
-import ScoutEndgame from './components/ScoutEndgame.vue';
-import ScoutObservations from './components/ScoutObservations.vue';
+// Components are now loaded by the router, so direct imports are no longer needed.
 
 const route = useRoute();
 const router = useRouter();
@@ -33,7 +43,8 @@ const router = useRouter();
 const formData = reactive({
   auton: {},
   teleop: {},
-  endgame: {}
+  endgame: {},
+  observations: { categories: [], notes: '' }
 });
 const error = ref(null);
 const isSaving = ref(false);
@@ -42,6 +53,37 @@ const userId = ref(null);
 let docRef = null;
 let unsubscribeDoc = null;
 let authUnsubscribe = null;
+
+// This computed property determines which part of the form is currently active
+// based on the route name.
+const currentSection = computed(() => {
+  const routeName = String(route.name || '');
+  if (routeName.startsWith('scout-auton')) return 'auton';
+  if (routeName.startsWith('scout-teleop')) return 'teleop';
+  if (routeName.startsWith('scout-endgame')) return 'endgame';
+  if (routeName.startsWith('scout-observations')) return 'observations';
+  return null;
+});
+
+// This computed property with a getter and setter acts as the v-model
+// for the currently active component rendered by <router-view>.
+const currentModel = computed({
+  get() {
+    if (currentSection.value) {
+      // Ensure the section exists on formData before returning it
+      if (!formData[currentSection.value]) {
+        formData[currentSection.value] = {};
+      }
+      return formData[currentSection.value];
+    }
+    return {};
+  },
+  set(value) {
+    if (currentSection.value) {
+      formData[currentSection.value] = value;
+    }
+  }
+});
 
 onMounted(() => {
   const auth = getAuth();
@@ -108,3 +150,32 @@ async function saveScoutData() {
   }
 }
 </script>
+
+<style scoped>
+/* Add some basic styling for the nav links to look like tabs */
+nav {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+nav a {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  text-decoration: none;
+  color: #2c3e50;
+  border-radius: 4px;
+}
+nav a.router-link-active {
+  background-color: #42b983;
+  color: white;
+  border-color: #42b983;
+}
+.error-message {
+  color: red;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+</style>

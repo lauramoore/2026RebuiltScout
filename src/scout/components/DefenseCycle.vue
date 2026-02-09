@@ -62,24 +62,16 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const defenseLocation = computed({
-  get: () => props.modelValue.defenseLocation,
-  set: (value) => emit('update:modelValue', { ...props.modelValue, defenseLocation: value })
-});
-const effective = computed({
-  get: () => props.modelValue.effective,
-  set: (value) => emit('update:modelValue', { ...props.modelValue, effective: value })
-});
-const penalties = computed({
-  get: () => props.modelValue.penalties,
-  set: (value) => emit('update:modelValue', { ...props.modelValue, penalties: value })
-});
-const majorFoul = computed({
-  get: () => props.modelValue.majorFoul,
-  set: (value) => emit('update:modelValue', { ...props.modelValue, majorFoul: value })
-});
-const techFoul = computed({
-  get: () => props.modelValue.techFoul,
-  set: (value) => emit('update:modelValue', { ...props.modelValue, techFoul: value })
-});
+const useVModel = (key) => {
+    return computed({
+        get: () => props.modelValue[key],
+        set: (value) => emit('update:modelValue', { ...props.modelValue, [key]: value })
+    });
+};
+
+const defenseLocation = useVModel('defenseLocation');
+const effective = useVModel('effective');
+const penalties = useVModel('penalties');
+const majorFoul = useVModel('majorFoul');
+const techFoul = useVModel('techFoul');
 </script>

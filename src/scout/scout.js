@@ -28,7 +28,7 @@ const routes = [
             meta: { title: 'Scoring' }
         },
          {
-            path: 'passing', // -> /scout/:match/:team/teleop/defense
+            path: 'passing', // -> /scout/:match/:team/teleop/passing
             name: 'scout-teleop-passing',
             component: () => import('./components/PassingCycle.vue'),
             meta: { title: 'Passing' }

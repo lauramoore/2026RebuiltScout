@@ -70,11 +70,8 @@ const currentSection = computed(() => {
 const currentModel = computed({
   get() {
     if (currentSection.value) {
-      // Ensure the section exists on formData before returning it
-      if (!formData[currentSection.value]) {
-        formData[currentSection.value] = {};
-      }
-      return formData[currentSection.value];
+      // Return the data for the current section, or a default empty object if it's falsy.
+      return formData[currentSection.value] || {};
     }
     return {};
   },

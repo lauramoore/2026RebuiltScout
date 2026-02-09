@@ -70,24 +70,16 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const fromLocation = computed({
-  get: () => props.modelValue.collectionLocation,
-  set: (value) => emit('update:modelValue', { ...props.modelValue, collectionLocation: value })
-});
-const capacity = computed({
-  get: () => props.modelValue.fromLocation,
-  set: (value) => emit('update:modelValue', { ...props.modelValue, fromLocation: value })
-});
-const speed = computed({
-  get: () => props.modelValue.speed,
-  set: (value) => emit('update:modelValue', { ...props.modelValue, speed: value })
-});
-const accuracy = computed({
-  get: () => props.modelValue.accuracy,
-  set: (value) => emit('update:modelValue', { ...props.modelValue, accuracy: value })
-});
-const mobileShotCapable = computed({
-  get: () => props.modelValue.fromLocation,
-  set: (value) => emit('update:modelValue', { ...props.modelValue, fromLocation: value })
-});
+const useVModel = (key) => {
+    return computed({
+        get: () => props.modelValue[key],
+        set: (value) => emit('update:modelValue', { ...props.modelValue, [key]: value })
+    });
+};
+
+const fromLocation = useVModel('fromLocation');
+const capacity = useVModel('capacity');
+const speed = useVModel('speed');
+const accuracy = useVModel('accuracy');
+const mobileShotCapable = useVModel('mobileShotCapable');
 </script>

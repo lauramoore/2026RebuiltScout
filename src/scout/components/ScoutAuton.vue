@@ -27,7 +27,7 @@ const currentIndex = ref(0);
 
 watch(() => model.value.scoring, (newCycles) => {
     if (!newCycles || newCycles.length === 0) {
-        model.value = { ...model.value, scoring: [{}] };
+        model.value.scoring = [{}];
     }
     currentIndex.value = (model.value.scoring?.length || 1) - 1;
 }, { immediate: true });
@@ -39,15 +39,14 @@ const currentCycleModel = computed({
   set: (value) => {
     const newCycles = [...(model.value.scoring || [])];
     newCycles[currentIndex.value] = value;
-    model.value = { ...model.value, scoring: newCycles };
+    model.value.scoring = newCycles;
   }
 });
 
 function addCycle() {
-  const cycles = model.value.scoring || [{}];
-  const lastCycle = cycles[cycles.length - 1] || {};
-  const newCycles = [...cycles, { ...lastCycle }];
-  model.value = { ...model.value, scoring: newCycles };
+  const cycles = model.value.scoring || [];
+  const newCycles = [...cycles, {}];
+  model.value.scoring = newCycles;
   currentIndex.value = newCycles.length - 1;
 }
 

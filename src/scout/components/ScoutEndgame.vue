@@ -44,12 +44,12 @@ const model = computed({
 
 const climb = computed({
   get: () => model.value.climb,
-  set: (value) => { model.value = { ...model.value, climb: value }; }
+  set: (value) => { model.value.climb = value; }
 });
 
 const climbAborted = computed({
   get: () => model.value.climbAborted,
-  set: (value) => { model.value = { ...model.value, climbAborted: value }; }
+  set: (value) => { model.value.climbAborted = value; }
 });
 
 // --- Scoring Cycles ---
@@ -57,7 +57,7 @@ const scoringCurrentIndex = ref(0);
 
 watch(() => model.value.scoring, (newCycles) => {
     if (!newCycles || newCycles.length === 0) {
-        model.value = { ...model.value, scoring: [{}] };
+        model.value.scoring = [{}];
     }
     scoringCurrentIndex.value = (model.value.scoring?.length || 1) - 1;
 }, { immediate: true });
@@ -67,15 +67,14 @@ const currentScoringCycle = computed({
   set: (value) => {
     const newCycles = [...(model.value.scoring || [])];
     newCycles[scoringCurrentIndex.value] = value;
-    model.value = { ...model.value, scoring: newCycles };
+    model.value.scoring = newCycles;
   }
 });
 
 function addScoringCycle() {
-  const cycles = model.value.scoring || [{}];
-  const lastCycle = cycles[cycles.length - 1] || {};
-  const newCycles = [...cycles, { ...lastCycle }];
-  model.value = { ...model.value, scoring: newCycles };
+  const cycles = model.value.scoring || [];
+  const newCycles = [...cycles, {}];
+  model.value.scoring = newCycles;
   scoringCurrentIndex.value = newCycles.length - 1;
 }
 

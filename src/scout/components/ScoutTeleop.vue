@@ -1,12 +1,14 @@
 <template>
   <h1>Teleop</h1>
   <div>
+      <router-link :to="`/scout/${$route.params.match}/${$route.params.team}/teleop/scoring`" custom v-slot="{ navigate, isActive }">
+      <button :class="{ active: isActive }" @click="navigate">Scoring</button>
+    </router-link>
+
     <router-link :to="`/scout/${$route.params.match}/${$route.params.team}/teleop/passing`" custom v-slot="{ navigate, isActive }">
       <button :class="{ active: isActive }" @click="navigate">Passing/Stockpiling</button>
     </router-link>
-    <router-link :to="`/scout/${$route.params.match}/${$route.params.team}/teleop/scoring`" custom v-slot="{ navigate, isActive }">
-      <button :class="{ active: isActive }" @click="navigate">Scoring</button>
-    </router-link>
+
     <router-link :to="`/scout/${$route.params.match}/${$route.params.team}/teleop/defense`" custom v-slot="{ navigate, isActive }">
       <button :class="{ active: isActive }" @click="navigate">Defense</button>
     </router-link>
@@ -53,19 +55,18 @@ const cycleType = computed(() => {
 
 const currentIndex = ref(0);
 
-watch(cycleType, (newType, oldType) => {
-    if (newType !== oldType && newType) {
-        const cycles = model.value[newType] || [];
-        currentIndex.value = cycles.length > 0 ? cycles.length - 1 : 0;
+watch(cycleType, (newType) => {
+    if (!newType) return;
+
+    const cycles = model.value[newType] || [];
+    if (cycles.length === 0) {
+        const newCycles = [{}];
+        model.value[newType] = newCycles;
+        currentIndex.value = 0;
+    } else {
+        currentIndex.value = cycles.length - 1;
     }
 }, { immediate: true });
-
-watch(cycleType, (newType) => {
-    if (newType && (!model.value[newType] || model.value[newType].length === 0)) {
-        const newCycles = [{}];
-        model.value = { ...model.value, [newType]: newCycles };
-    }
-}, { immediate: true, deep: true });
 
 
 const currentCycleModel = computed({
@@ -79,19 +80,15 @@ const currentCycleModel = computed({
     const cycles = model.value[cycleType.value] || [];
     const newCycles = [...cycles];
     newCycles[currentIndex.value] = value;
-    model.value = {
-      ...model.value,
-      [cycleType.value]: newCycles
-    };
+    model.value[cycleType.value] = newCycles;
   }
 });
 
 function addCycle() {
   if (!cycleType.value) return;
-  const cycles = model.value[cycleType.value] || [{}];
-  const lastCycle = cycles[cycles.length - 1] || {};
-  const newCycles = [...cycles, { ...lastCycle }];
-  model.value = { ...model.value, [cycleType.value]: newCycles };
+  const cycles = model.value[cycleType.value] || [];
+  const newCycles = [...cycles, {}];
+  model.value[cycleType.value] = newCycles;
   currentIndex.value = newCycles.length - 1;
 }
 

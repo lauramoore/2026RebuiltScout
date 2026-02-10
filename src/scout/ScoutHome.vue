@@ -16,12 +16,12 @@
   <tbody>
     <tr v-for="match in matches" :key="match.id">
       <td>{{ match.matchNumber }}</td>
-      <td class="clickable-team" @click="scoutTeam(match, match.red1)">{{ match.red1 }}</td>
-      <td class="clickable-team" @click="scoutTeam(match, match.red2)">{{ match.red2 }}</td>
-      <td class="clickable-team" @click="scoutTeam(match, match.red3)">{{ match.red3 }}</td>
-      <td class="clickable-team" @click="scoutTeam(match, match.blue1)">{{ match.blue1 }}</td>
-      <td class="clickable-team" @click="scoutTeam(match, match.blue2)">{{ match.blue2 }}</td>
-      <td class="clickable-team" @click="scoutTeam(match, match.blue3)">{{ match.blue3 }}</td>
+      <td class="clickable-team" @click="scoutTeam(match.id, match.red[0])">{{ match.red[0] }}</td>
+      <td class="clickable-team" @click="scoutTeam(match, match.red[1])">{{ match.red[1] }}</td>
+      <td class="clickable-team" @click="scoutTeam(match, match.red[2])">{{ match.red[2] }}</td>
+      <td class="clickable-team" @click="scoutTeam(match, match.blue[0])">{{ match.blue[0] }}</td>
+      <td class="clickable-team" @click="scoutTeam(match, match.blue[1])">{{ match.blue[1] }}</td>
+      <td class="clickable-team" @click="scoutTeam(match, match.blue[2])">{{ match.blue[2] }}</td>
     </tr>
   </tbody>
   </table>
@@ -42,8 +42,8 @@ let unsubscribe = null;
 let authUnsubscribe = null;
 
 onMounted(() => {
-  const matchesCollection = collection(db, 'gadal2026');
-  const q = query(matchesCollection, orderBy('matchNumber'));
+  const scheduleRef = collection(db, 'competitions', 'gadal2026', 'schedule');
+  const q = query(scheduleRef, orderBy('matchNumber', 'asc'));
 
   unsubscribe = onSnapshot(q, (querySnapshot) => {
     if (querySnapshot.empty) {

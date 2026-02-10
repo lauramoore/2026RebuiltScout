@@ -104,7 +104,7 @@ function setupFirestoreListener() {
   const matchNumber = route.params.match;
   const teamNumber = route.params.team;
 
-  docRef = doc(db, 'users', userId.value, eventCode, matchNumber);
+  docRef = doc(db, eventCode, userId.value, matchNumber);
 
   unsubscribeDoc = onSnapshot(docRef, (docSnap) => {
     if (docSnap.exists()) {
@@ -138,7 +138,8 @@ async function saveScoutData() {
       [`scoutingData.${teamNumber}`]: formData
     });
     // Navigate back to the schedule after saving.
-    router.back();
+    // \\
+    // router.back();
   } catch (err) {
     console.error("Error saving scout data:", err);
     error.value = `Failed to save data: ${err.message}`;

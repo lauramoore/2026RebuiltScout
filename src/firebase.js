@@ -4,13 +4,16 @@ import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
 // these are local dev only - do not use in production
+// The configuration is loaded from environment variables for security and flexibility.
+// In a Vite project, these are exposed via `import.meta.env`.
+// Create a .env.local file in your project root to define these.
 const firebaseConfig = {
-    apiKey: 'fake-api-key',
-    authDomain: 'localhost',
-    projectId: '2974-rebuilt-scout',
-    storageBucket: '2974-rebuilt-scout.appspot.com',
-    messagingSenderId: '1234567890',
-    appId: '1:1234567890:web:abcdef123456'
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 const firebaseApp = initializeApp(firebaseConfig);

@@ -100,42 +100,50 @@ onMounted(() => {
 async function setupFirestoreListener() {
   if (!userId.value) return;
 
-  const eventCode = route.params.event;
-  const matchNumber = route.params.match;
-  const teamNumber = route.params.team;
-  const scoutRef = `${userId.value}_${teamNumber}`;
+  try {
+    const eventCode = route.params.event;
+    const matchNumber = route.params.match;
+    const teamNumber = route.params.team;
+    const scoutRef = `${userId.value}_${teamNumber}`;
 
 
 
-    docRef = doc(db, 'competitions', eventCode,
-                           'matches', matchNumber,
-                           'scouting', scoutRef  );
-    // Create document for each scouter_team so that different users can't overwrite each other
-    //and will not have any document contention during scouting
-    await setDoc(docRef, {
-      team: teamNumber,
-      match: matchNumber,
-      scout: userId.value,
-      lastUpdated: new Date()
-     }, { merge: true });
+      docRef = doc(db, 'competitions', eventCode,
+                            'matches', matchNumber,
+                            'scouting', scoutRef  );
+      // Create document for each scouter_team so that different users can't overwrite each other
+      //and will not have any document contention during scouting
+      // We initialize the document with a full, empty structure.
+      // Using { merge: true } prevents us from overwriting existing data if the user reloads the page.
+      // This also helps satisfy security rules that might require certain fields to exist.
+      const initialData = {
+        team: teamNumber,
+        match: matchNumber,
+        scout: userId.value,
+        lastUpdated: new Date(),
+        auton: {},
+        teleop: {},
+        endgame: {},
+        observations: { categories: [], notes: '' }
+      };
+      await setDoc(docRef, initialData, { merge: true });
 
-  unsubscribeDoc = onSnapshot(docRef, (docSnap) => {
-    if (docSnap.exists()) {
-      const remoteData = docSnap.data() || {};
-      // To ensure the local state is a clean reflection of the remote state,
-      // we replace the top-level properties of our reactive `formData`.
-      // Vue's reactivity system will handle turning the new plain JS objects
-      // into reactive proxies. This is safer than using Object.assign, which
-      // can leave stale properties if they are removed on the server.
-      formData.auton = remoteData.auton || {};
-      formData.teleop = remoteData.teleop || {};
-      formData.endgame = remoteData.endgame || {};
-      formData.observations = remoteData.observations || { categories: [], notes: '' };
-    }
-  }, (err) => {
-    console.error("Error listening to scout document:", err);
-    error.value = "Failed to load scouting data.";
-  });
+    unsubscribeDoc = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const remoteData = docSnap.data() || {};
+        formData.auton = remoteData.auton || {};
+        formData.teleop = remoteData.teleop || {};
+        formData.endgame = remoteData.endgame || {};
+        formData.observations = remoteData.observations || { categories: [], notes: '' };
+      }
+    }, (err) => {
+      console.error("Error listening to scout document:", err);
+      error.value = "Failed to load scouting data.";
+    });
+  } catch (err) {
+    console.error("Error setting up Firestore listener:", err);
+    error.value = `Failed to initialize scouting session: ${err.message}`;
+  }
 }
 
 onUnmounted(() => {
@@ -156,7 +164,11 @@ async function saveScoutData() {
     // toRaw() gets the plain object, and the JSON dance removes any 'undefined' values
     // that Firestore would reject.
     const dataToSave = JSON.parse(JSON.stringify(toRaw(formData)));
-    await setDoc(docRef, dataToSave, { merge: true });
+    // Always update the timestamp and merge with the existing document.
+    await setDoc(docRef, {
+      ...dataToSave,
+      lastUpdated: new Date()
+    }, { merge: true });
     // Navigate back to the schedule after saving.
     // \\
     // router.back();

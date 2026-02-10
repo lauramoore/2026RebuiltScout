@@ -2,7 +2,7 @@ import ScoutHome from './ScoutHome.vue';
 
 const routes = [
   {
-    path: '/scout/:match/:team',
+    path: '/scout/:event/:match/:team',
     name: 'scout-form',
     component: () => import('./ScoutView.vue'),
     meta: { requiresAuth: true },
@@ -20,10 +20,14 @@ const routes = [
         path: 'teleop', // relative path -> /scout/:match/:team/teleop
         name: 'scout-teleop',
         component: () => import('./components/ScoutTeleop.vue'),
+        // Redirect to the first teleop section by default for a better UX.
+        redirect: to => {
+          return { name: 'scout-teleop-scoring', params: to.params };
+        },
          children: [
         {
             path: 'scoring', // -> /scout/:match/:team/teleop/scoring
-            name: 'scout-telop-scoring',
+            name: 'scout-teleop-scoring',
             component: () => import('./components/ScoreCycle.vue'),
             meta: { title: 'Scoring' }
         },

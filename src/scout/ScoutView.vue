@@ -29,10 +29,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted, computed } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, computed, toRaw } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { db } from '../firebase.js';
-import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 // Components are now loaded by the router, so direct imports are no longer needed.
@@ -97,20 +97,40 @@ onMounted(() => {
   });
 });
 
-function setupFirestoreListener() {
+async function setupFirestoreListener() {
   if (!userId.value) return;
 
-  const eventCode = 'gadal2026';
+  const eventCode = route.params.event;
   const matchNumber = route.params.match;
   const teamNumber = route.params.team;
+  const scoutRef = `${userId.value}_${teamNumber}`;
 
-  docRef = doc(db, eventCode, userId.value, matchNumber);
+
+
+    docRef = doc(db, 'competitions', eventCode,
+                           'matches', matchNumber,
+                           'scouting', scoutRef  );
+    // Create document for each scouter_team so that different users can't overwrite each other
+    //and will not have any document contention during scouting
+    await setDoc(docRef, {
+      team: teamNumber,
+      match: matchNumber,
+      scout: userId.value,
+      lastUpdated: new Date()
+     }, { merge: true });
 
   unsubscribeDoc = onSnapshot(docRef, (docSnap) => {
     if (docSnap.exists()) {
-      const teamData = docSnap.data()?.[`scoutingData.${teamNumber}`] || {};
-      // Merge data to avoid overwriting the reactive object
-      Object.assign(formData, teamData);
+      const remoteData = docSnap.data() || {};
+      // To ensure the local state is a clean reflection of the remote state,
+      // we replace the top-level properties of our reactive `formData`.
+      // Vue's reactivity system will handle turning the new plain JS objects
+      // into reactive proxies. This is safer than using Object.assign, which
+      // can leave stale properties if they are removed on the server.
+      formData.auton = remoteData.auton || {};
+      formData.teleop = remoteData.teleop || {};
+      formData.endgame = remoteData.endgame || {};
+      formData.observations = remoteData.observations || { categories: [], notes: '' };
     }
   }, (err) => {
     console.error("Error listening to scout document:", err);
@@ -132,11 +152,11 @@ async function saveScoutData() {
   error.value = null;
 
   try {
-    const teamNumber = route.params.team;
-    // Use dot notation to update only the data for this team.
-    await updateDoc(docRef, {
-      [`scoutingData.${teamNumber}`]: formData
-    });
+    // Create a clean data object for Firestore.
+    // toRaw() gets the plain object, and the JSON dance removes any 'undefined' values
+    // that Firestore would reject.
+    const dataToSave = JSON.parse(JSON.stringify(toRaw(formData)));
+    await setDoc(docRef, dataToSave, { merge: true });
     // Navigate back to the schedule after saving.
     // \\
     // router.back();

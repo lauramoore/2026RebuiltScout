@@ -15,13 +15,13 @@
   </thead>
   <tbody>
     <tr v-for="match in matches" :key="match.id">
-      <td>{{ match.matchNumber }}</td>
+      <td>{{ match.id }}</td>
       <td class="clickable-team" @click="scoutTeam(match.id, match.red[0])">{{ match.red[0] }}</td>
-      <td class="clickable-team" @click="scoutTeam(match, match.red[1])">{{ match.red[1] }}</td>
-      <td class="clickable-team" @click="scoutTeam(match, match.red[2])">{{ match.red[2] }}</td>
-      <td class="clickable-team" @click="scoutTeam(match, match.blue[0])">{{ match.blue[0] }}</td>
-      <td class="clickable-team" @click="scoutTeam(match, match.blue[1])">{{ match.blue[1] }}</td>
-      <td class="clickable-team" @click="scoutTeam(match, match.blue[2])">{{ match.blue[2] }}</td>
+      <td class="clickable-team" @click="scoutTeam(match.id, match.red[1])">{{ match.red[1] }}</td>
+      <td class="clickable-team" @click="scoutTeam(match.id, match.red[2])">{{ match.red[2] }}</td>
+      <td class="clickable-team" @click="scoutTeam(match.id, match.blue[0])">{{ match.blue[0] }}</td>
+      <td class="clickable-team" @click="scoutTeam(match.id, match.blue[1])">{{ match.blue[1] }}</td>
+      <td class="clickable-team" @click="scoutTeam(match.id, match.blue[2])">{{ match.blue[2] }}</td>
     </tr>
   </tbody>
   </table>
@@ -40,9 +40,10 @@ const router = useRouter();
 
 let unsubscribe = null;
 let authUnsubscribe = null;
+const eventCode = 'gadal2026';
 
 onMounted(() => {
-  const scheduleRef = collection(db, 'competitions', 'gadal2026', 'schedule');
+  const scheduleRef = collection(db, 'competitions', eventCode, 'schedule');
   const q = query(scheduleRef, orderBy('matchNumber', 'asc'));
 
   unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -77,7 +78,7 @@ onUnmounted(() => {
   }
 });
 
-async function scoutTeam(match, teamNumber) {
+async function scoutTeam(matchNumber, teamNumber) {
   if (!userId.value) {
     error.value = "You must be logged in to scout a match.";
     return;
@@ -90,14 +91,9 @@ async function scoutTeam(match, teamNumber) {
   error.value = null;
 
   try {
-    const eventCode = 'gadal2026';
-    const docRef = doc(db, 'users', userId.value, eventCode, String(match.matchNumber));
-    // Create document with match details if it doesn't exist, or merge if it does.
-    // Ensure a document for the match exists. This will hold scouting data for all teams.
-    // Using { merge: true } prevents overwriting existing scouting data for other teams.
-    await setDoc(docRef, { ...match }, { merge: true });
+
     // Navigate to the scouting form for the specific team.
-    router.push({ name: 'scout-form', params: { match: match.matchNumber, team: teamNumber } });
+    router.push({ name: 'scout-form', params: { event: eventCode, match: matchNumber, team: teamNumber } });
   } catch (err) {
     console.error("Failed to create match scout document:", err);
     error.value = `Failed to prepare for match scouting: ${err.message}`;

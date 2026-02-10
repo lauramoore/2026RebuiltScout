@@ -30,7 +30,7 @@
 
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, computed, toRaw } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute} from 'vue-router';
 import { db } from '../firebase.js';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -38,7 +38,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 // Components are now loaded by the router, so direct imports are no longer needed.
 
 const route = useRoute();
-const router = useRouter();
+//const router = useRouter();
 
 const formData = reactive({
   auton: {},

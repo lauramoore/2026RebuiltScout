@@ -29,3 +29,7 @@ coverage
 
 *.tsbuildinfo
 dev-data/
+
+.env.local
+.env.*.local
+apphosting.*

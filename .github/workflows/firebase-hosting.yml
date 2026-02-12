@@ -23,8 +23,8 @@ jobs:
       - name: Install & Build
         run: |
           npm ci
-          npm run build
           cd functions && npm ci && cd ..
+          npm run build
 
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master

@@ -10,6 +10,7 @@
     "dev": "npm run build:functions && concurrently \"npm run build:watch --prefix functions\" \"firebase emulators:start --import=./dev-data --export-on-exit\"",
     "dev:ui": "vite --port 5002",
     "dev:functions": "npm run serve --prefix functions",
+    "build": "npm run build:ui && npm run build:functions",
     "build:ui": "vite build",
     "build:functions": "npm run build --prefix functions",
     "preview": "vite preview",

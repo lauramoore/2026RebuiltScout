@@ -1,0 +1,36 @@
+name: Manual Firebase Deploy
+on:
+  # This adds the "Run workflow" button in the GitHub UI
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: 'What to deploy?'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - hosting
+          - functions
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Install & Build
+        run: |
+          npm ci
+          npm run build
+          cd functions && npm ci && cd ..
+
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: >-
+            deploy 
+            ${{ github.event.inputs.deploy_target == 'all' && '' || format('--only {0}', github.event.inputs.deploy_target) }}
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_REBUILT_SCOUT_2974 }}

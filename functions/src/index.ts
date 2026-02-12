@@ -16,8 +16,10 @@ import { getEventSchedule, getEvents } from "./first-events/index.js";
 initializeApp();
 
 const db = getFirestore();
+/*
 const apiToken = defineSecret("FIRST_API_TOKEN");
 const season = defineInt('SEASON', { default: 2026 });
+*/
 
 // For cost control, you can set the maximum number of containers that can be
 // running at the same time. This helps mitigate the impact of unexpected
@@ -30,8 +32,9 @@ const season = defineInt('SEASON', { default: 2026 });
 // In the v1 API, each function can only serve one request per container, so
 // this will be the maximum concurrent request count.
 setGlobalOptions({ maxInstances: 10 });
-
+export { validateUserDomain } from "./users/precheck.js";
+/*
 export const events =  {
   getEventSchedule: getEventSchedule(db, apiToken, season),
   getEvents: getEvents(db, apiToken, season),
-};
+}; */

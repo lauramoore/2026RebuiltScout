@@ -29,6 +29,6 @@ jobs:
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:
-          args: deploy ${{ github.event.inputs.deploy_target != 'all' && format('--only {0}', github.event.inputs.deploy_target) }}
+          args: deploy${{ github.event.inputs.deploy_target != 'all' && format(' --only {0}', github.event.inputs.deploy_target) || '' }}
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_REBUILT_SCOUT_2974 }}

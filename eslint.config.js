@@ -6,12 +6,16 @@ import pluginVitest from '@vitest/eslint-plugin'
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 
 export default defineConfig([
+
+  globalIgnores([
+    '**/dist/**', '**/dist-ssr/**', '**/coverage/**', 'public/**',
+    '**/.eslintrc.js', '**/node_modules/**'
+  ]),
+
   {
     name: 'app/files-to-lint',
-    files: ['**/*.{js,mjs,jsx,vue}'],
+    files: ['src/**/*.{js,mjs,jsx,vue}'],
   },
-
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
 
   {
     languageOptions: {
@@ -23,7 +27,7 @@ export default defineConfig([
 
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
-  
+
   {
     ...pluginVitest.configs.recommended,
     files: ['src/**/__tests__/*'],

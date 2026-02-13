@@ -23,7 +23,7 @@ jobs:
       - name: Install & Build
         run: |
           npm ci
-          cd functions && npm install && cd ..
+          cd functions && npm ci && cd ..
           npm run build
 
       - name: Deploy to Firebase

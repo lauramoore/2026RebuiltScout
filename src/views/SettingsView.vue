@@ -1,20 +1,10 @@
 <template>
   <div class="settings">
-    <button @click="schedule">Match Schedule</button>
-    <button @click="changeUser">User</button>
   </div>
 </template>
 
 <script setup>
 
-const changeUser = () => {
-
-};
-
-const schedule = async () => {
- 
-
-};
 </script>
 
 <style scoped>

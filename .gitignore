@@ -31,5 +31,6 @@ coverage
 dev-data/
 
 .env.local
-.env.*.local
+.env.*
 apphosting.*
+.firebase/

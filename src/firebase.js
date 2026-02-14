@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 // these are local dev only - do not use in production
 // The configuration is loaded from environment variables for security and flexibility.
@@ -32,21 +33,13 @@ if (window.location.hostname === 'localhost') {
   connectAuthEmulator(auth, 'http://localhost:9099');
   connectFunctionsEmulator(functions, 'localhost', 5001);
   connectFirestoreEmulator(db, 'localhost', 8080 )
+  self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
 }
 
-
-
- async function refreshSchedule() {
-    const response = await fetch('/api/getEventSchedule');
-    if (!response.ok) {
-      // Handle API errors more gracefully if needed
-      const errorText = await response.text();
-      throw new Error(`API request failed with status ${response.status}: ${errorText}`);
-    }
-    // httpsCallable automatically unwraps a 'data' property.
-    // With fetch, you get the raw body, so you parse it as JSON.
-    return response.status
-  }
+const appCheck = initializeAppCheck(firebaseApp, {
+  provider: new ReCaptchaV3Provider(import.meta.env.VITE_RECAPTCHA_SITE_KEY),
+  isTokenAutoRefreshEnabled: true
+});
 
 
 // Re-export what's needed in other parts of the app
@@ -56,6 +49,5 @@ export {
   db,
   authProvider,
   onAuthStateChanged,
-  GoogleAuthProvider,
-  refreshSchedule
+  GoogleAuthProvider
 };

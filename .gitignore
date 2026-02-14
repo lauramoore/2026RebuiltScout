@@ -32,5 +32,6 @@ dev-data/
 
 .env.local
 .env.*
+.env
 apphosting.*
 .firebase/

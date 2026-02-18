@@ -49,6 +49,7 @@ const formData = reactive({
 const error = ref(null);
 const isSaving = ref(false);
 const userId = ref(null);
+const userName = ref(null);
 
 let docRef = null;
 let unsubscribeDoc = null;
@@ -87,11 +88,13 @@ onMounted(() => {
   authUnsubscribe = onAuthStateChanged(auth, user => {
     if (user) {
       userId.value = user.uid;
+      userName.value = user.email;
       setupFirestoreListener();
     } else {
       // This should not happen due to the route guard, but handle it just in case.
       error.value = "You must be logged in to scout.";
       userId.value = null;
+      userName.value = null;
       if (unsubscribeDoc) unsubscribeDoc();
     }
   });
@@ -119,7 +122,7 @@ async function setupFirestoreListener() {
       const initialData = {
         team: teamNumber,
         match: matchNumber,
-        scout: userId.value,
+        scout: userName.value,
         lastUpdated: new Date(),
         auton: {},
         teleop: {},

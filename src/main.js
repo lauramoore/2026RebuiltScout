@@ -16,7 +16,13 @@ const routes = [
       path: '/',
       name: 'home',
       component: () => import('./views/HomeView.vue'),
-      meta: { requiresAuth: true } // Mark this as protected
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/summary/match/:event/:match',
+      name: 'match-summary',
+      component: () => import('./summary/MatchSummary.vue'),
+      meta: {requiresAuth: true }
     },
     ...scoutModule.scoutRoutes
 ]
@@ -25,7 +31,6 @@ export const router = createRouter({
   history: createWebHistory(),
   routes,
 })
-
 // The Navigation Guard
 router.beforeEach(async (to, from, next) => {
   // Helper to wait for Firebase to initialize

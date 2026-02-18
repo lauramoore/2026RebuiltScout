@@ -65,6 +65,6 @@
     "singleProjectMode": true
   },
   "extensions": {
-    "firestore-bigquery-export": "firebase/firestore-bigquery-export@0.2.6"
+   
   }
 }

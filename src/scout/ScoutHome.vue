@@ -22,6 +22,7 @@
       <td class="clickable-team" @click="scoutTeam(match.id, match.blue[0])">{{ match.blue[0] }}</td>
       <td class="clickable-team" @click="scoutTeam(match.id, match.blue[1])">{{ match.blue[1] }}</td>
       <td class="clickable-team" @click="scoutTeam(match.id, match.blue[2])">{{ match.blue[2] }}</td>
+      <td class="clickable-team" @click="summarizeMatch(match.id)"> Match Summary </td>
     </tr>
   </tbody>
   </table>
@@ -100,6 +101,19 @@ async function scoutTeam(matchNumber, teamNumber) {
     console.error("Failed to prepare for team scouting:", err);
     error.value = `Failed to prepare for scouting: ${err.message}`;
   }
+}
+
+async function summarizeMatch(matchNumber) {
+  if (!userId.value) {
+    error.value = "You must be logged in to summarize a match.";
+    return;
+  }
+  if (!matchNumber) {
+    // Don't do anything if the team number is not assigned yet in the schedule.
+    return;
+  }
+    // Navigate to the scouting form for the specific team.
+  router.push({ name: 'match-summary', params: { event: eventCode, match: matchNumber } });
 }
 </script>
 <style scoped>

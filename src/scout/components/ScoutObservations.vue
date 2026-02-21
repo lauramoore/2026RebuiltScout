@@ -3,28 +3,25 @@
   <h3>Categories</h3>
   <div class="categories-container">
       <label>
-      <input type="checkbox" value="trench" v-model="categories" />Trench
+      <input type="checkbox" value="trench" v-model="categories" />Uses Trench
     </label>
     <label>
-      <input type="checkbox" value="bump" v-model="categories" />Bump
+      <input type="checkbox" value="bump" v-model="categories" />Uses Bump
     </label>
     <label>
+      <input type="checkbox" value="2e2Shooter" v-model="categories" />End-To-End Passing
+    </label>
+    <label>
+      <input type="checkbox" value="bulldozer" v-model="categories" />Fuel Bulldozer
+    </label>
+     <label>
+      <input type="checkbox" value="didNotShow" v-model="categories" />Never Showed
+    </label>
+      <label>
       <input type="checkbox" value="inTheWay" v-model="categories" />Blocked Partners
     </label>
     <label>
-      <input type="checkbox" value="broken" v-model="categories" />Broke Down
-    </label>
-    <label>
-      <input type="checkbox" value="slow" v-model="categories" />Slow
-    </label>
-    <label>
-      <input type="checkbox" value="avoidsDefense" v-model="categories" />Escape Artist
-    </label>
-    <label>
-      <input type="checkbox" value="sniper" v-model="categories" />Sniper
-    </label>
-     <label>
-      <input type="checkbox" value="bigdumper" v-model="categories" />Dump Truck
+      <input type="checkbox" value="broken" v-model="categories" />Broke During Match
     </label>
   </div>
   <h3>Notes</h3>

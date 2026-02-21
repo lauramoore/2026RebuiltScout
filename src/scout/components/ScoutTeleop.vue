@@ -15,12 +15,7 @@
   <!-- Display title from route meta -->
   <h2 v-if="$route.meta.title">{{ $route.meta.title }}</h2>
 
-  <div v-if="currentCycleType">
-    <button @click="previousCycle" :disabled="currentIndex === 0" type="button">Previous Cycle</button>
-    <span>Cycle {{ currentIndex + 1 }} of {{ (model[currentCycleType] || []).length }}</span>
-    <button @click="nextCycle" :disabled="currentIndex >= (model[currentCycleType] || []).length - 1" type="button">Next Cycle</button>
-    <button @click="addCycle" type="button">New Cycle</button>
-  </div>
+  <CycleNavigator v-if="currentCycleType" :current-index="currentIndex" :total-cycles="cycles.length" @previous="previousCycle" @next="nextCycle" @add="addCycle" new-button-text="New Cycle" />
 
   <!-- The router will render the matched child component here. -->
   <!-- We use v-slot to pass the correct v-model (a single cycle object) to the rendered component. -->
@@ -29,8 +24,10 @@
   </router-view>
 </template>
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { useCycleManager } from '../composables/useCycleManager.js';
+import CycleNavigator from './CycleNavigator.vue';
 
 const props = defineProps({
   modelValue: Object
@@ -53,49 +50,7 @@ const currentCycleType = computed(() => {
   return null;
 });
 
-const currentIndex = ref(0);
-
-// When the cycle type changes (e.g., user clicks "Scoring"), update the logic
-watch(currentCycleType, (newType) => {
-  if (newType) {
-    const cycles = model.value[newType] || [];
-    if (cycles.length === 0) {
-      // Initialize with one empty cycle if none exist
-      model.value[newType] = [{}];
-    }
-    // Go to the last cycle for this type
-    currentIndex.value = (model.value[newType]?.length || 1) - 1;
-  }
-}, { immediate: true });
-
-const currentCycleModel = computed({
-  get: () => {
-    if (!currentCycleType.value) return {};
-    const cycles = model.value[currentCycleType.value] || [];
-    return cycles[currentIndex.value] || {};
-  },
-  set: (value) => {
-    if (!currentCycleType.value) return;
-    const newCycles = [...(model.value[currentCycleType.value] || [])];
-    newCycles[currentIndex.value] = value;
-    model.value[currentCycleType.value] = newCycles;
-  }
-});
-
-function addCycle() {
-  const cycles = model.value[currentCycleType.value] || [];
-  model.value[currentCycleType.value] = [...cycles, {}];
-  currentIndex.value = cycles.length;
-}
-
-function previousCycle() {
-  if (currentIndex.value > 0) currentIndex.value--;
-}
-
-function nextCycle() {
-  const cycles = model.value[currentCycleType.value] || [];
-  if (currentIndex.value < cycles.length - 1) currentIndex.value++;
-}
+const { currentIndex, cycles, currentCycleModel, addCycle, previousCycle, nextCycle } = useCycleManager(model, currentCycleType);
 </script>
 
 <style scoped>

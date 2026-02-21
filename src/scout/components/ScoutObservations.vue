@@ -1,7 +1,7 @@
 <template>
   <h1>Observations</h1>
   <h3>Categories</h3>
-  <div>
+  <div class="categories-container">
       <label>
       <input type="checkbox" value="trench" v-model="categories" />Trench
     </label>
@@ -54,3 +54,15 @@ const notes = computed({
 });
 </script>
 
+<style scoped>
+.categories-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+textarea {
+  height: 8rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+</style>

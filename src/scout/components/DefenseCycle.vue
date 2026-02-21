@@ -17,36 +17,37 @@
       <input type="radio" value="home" v-model="defenseLocation" /> Home
     </label>
   </div>
+  <h3>Effectiveness</h3>
   <div>
     <label>
-      <input type="radio" value="1" v-model="effective" /> minor
+      <input type="radio" :value="1" v-model="effective" /> minor
     </label>
     <label>
-      <input type="radio" value="3" v-model="effective" /> decent
+      <input type="radio" :value="3" v-model="effective" /> decent
     </label>
     <label>
-      <input type="radio" value="7" v-model="effective" /> excellent
+      <input type="radio" :value="7" v-model="effective" /> excellent
     </label>
   </div>
-  <h3>Penaties</h3>
+  <h3>Penalties</h3>
   <div>
     <label>
-      <input type="radio" value="0" v-model="penalties" /> None
+      <input type="radio" :value="0" v-model="penalties" /> None
     </label>
     <label>
-      <input type="radio" value="1" v-model="penalties" /> 1-2
+      <input type="radio" :value="1" v-model="penalties" /> 1-2
     </label>
     <label>
-      <input type="radio" value="5" v-model="penalties" /> 3+
-    </label>
-    <div>
-    <label>
-      <input type="checkbox" value="true" v-model="majorFoul" />Yellow Card
-    </label>
-        <label>
-      <input type="checkbox" value="true" v-model="techFoul" />Red Card
+      <input type="radio" :value="5" v-model="penalties" /> 3+
     </label>
   </div>
+  <div>
+    <label>
+      <input type="checkbox" v-model="majorFoul" /> Yellow Card
+    </label>
+    <label>
+      <input type="checkbox" v-model="techFoul" /> Red Card
+    </label>
   </div>
 </template>
 

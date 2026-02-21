@@ -49,7 +49,25 @@ const routes = [
       {
         path: 'endgame',
         name: 'scout-endgame',
-        component: () => import('./components/ScoutEndgame.vue')
+        component: () => import('./components/ScoutEndgame.vue'),
+        redirect: to => {
+          return { name: 'scout-endgame-scoring', params: to.params };
+        },
+         children: [
+        {
+            path: 'scoring', // -> /scout/:match/:team/endgame/scoring
+            name: 'scout-endgame-scoring',
+            component: () => import('./components/ScoreCycle.vue'),
+            meta: { title: 'Scoring' }
+        },
+         {
+            path: 'defense', // -> /scout/:match/:team/endgame/defense
+            name: 'scout-endgame-defense',
+            component: () => import('./components/DefenseCycle.vue'),
+            meta: { title: 'Defense' }
+        },
+
+         ]
       },
       {
         path: "observations", // relative path -> /scout/:match/:team/observations

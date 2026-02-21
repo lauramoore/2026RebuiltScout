@@ -1,21 +1,74 @@
 <template>
   <h1>Auton</h1>
   <div>
-    <button @click="previousCycle" :disabled="currentIndex === 0" type="button">Previous Cycle</button>
-    <span>Cycle {{ currentIndex + 1 }} of {{ (model.scoring || []).length }}</span>
-    <button @click="nextCycle" :disabled="currentIndex >= (model.scoring || []).length - 1" type="button">Next Cycle</button>
-    <button @click="addCycle" type="button">New Cycle</button>
+    <h2>Preload</h2>
+
+    <div>
+      <label>
+        <input type="radio" value="0" v-model="preload.count" /> 0
+      </label>
+      <label>
+        <input type="radio" value="2" v-model="preload.count" /> 2
+      </label>
+      <label>
+        <input type="radio" value="4" v-model="preload.count" /> 4
+      </label>
+      <label>
+        <input type="radio" value="6" v-model="preload.count" /> 6
+      </label>
+      <label>
+        <input type="radio" value="8" v-model="preload.count" /> 8
+      </label>
+    </div>
+    <div>
+    <label>
+      <input type="radio" value="1" v-model="preload.speed" />pew
+    </label>
+    <label>
+      <input type="radio" value="3" v-model="preload.speed" /> pew-pew
+    </label>
+    <label>
+      <input type="radio" value="7" v-model="preload.speed" /> avalanche!
+    </label>
   </div>
+   <div>
+    <label>
+      <input type="radio" value="1" v-model="preload.accuracy" /> wild
+    </label>
+    <label>
+      <input type="radio" value="3" v-model="preload.accuracy" /> on target
+    </label>
+    <label>
+      <input type="radio" value="7" v-model="preload.accuracy" /> bullseye
+    </label>
+  </div>
+  <div>
+     <label>
+      <input type="checkbox" value="true" v-model="preload.mobileShot" /> on the move
+    </label>
+  </div>
+  </div>
+
+  <div>
+    <h2>Scoring Cycles</h2>
+  <CycleNavigator :current-index="currentIndex" :total-cycles="cycles.length" @previous="previousCycle" @next="nextCycle" @add="addCycle" />
   <ScoreCycle v-model="currentCycleModel"/>
+  </div>
+
+  <div>
+     <h2>L1 Climb <label> <input type="checkbox" v-model="climb" />
+     </label></h2>
+  </div>
 </template>
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import ScoreCycle from './ScoreCycle.vue';
+import CycleNavigator from './CycleNavigator.vue';
+import { useCycleManager } from '../composables/useCycleManager.js';
 
 const props = defineProps({
   modelValue: Object
 });
-
 const emit = defineEmits(['update:modelValue']);
 
 const model = computed({
@@ -23,43 +76,18 @@ const model = computed({
   set: (value) => emit('update:modelValue', value)
 });
 
-const currentIndex = ref(0);
-
-watch(() => model.value.scoring, (newCycles) => {
-    if (!newCycles || newCycles.length === 0) {
-        model.value.scoring = [{}];
-    }
-    currentIndex.value = (model.value.scoring?.length || 1) - 1;
-}, { immediate: true });
-
-const currentCycleModel = computed({
-  get: () => {
-    return (model.value.scoring || [])[currentIndex.value] || {};
-  },
-  set: (value) => {
-    const newCycles = [...(model.value.scoring || [])];
-    newCycles[currentIndex.value] = value;
-    model.value.scoring = newCycles;
-  }
+const climb = computed({
+  get: () => model.value.autonClimb || false,
+  set: (val) => model.value = { ...model.value, climb: val }
 });
 
-function addCycle() {
-  const cycles = model.value.scoring || [];
-  const newCycles = [...cycles, {}];
-  model.value.scoring = newCycles;
-  currentIndex.value = newCycles.length - 1;
-}
+const preload = computed({
+  get: () => model.value.preload || 0 ,
+  set: (val) => model.value = { ...model.value, preload: val }
+});
 
-function previousCycle() {
-  if (currentIndex.value > 0) {
-    currentIndex.value--;
-  }
-}
+const cycleKey = ref('scoring');
 
-function nextCycle() {
-  const cycles = model.value.scoring || [];
-  if (currentIndex.value < cycles.length - 1) {
-    currentIndex.value++;
-  }
-}
+const { currentIndex, cycles, currentCycleModel, addCycle, previousCycle, nextCycle } = useCycleManager(model, cycleKey);
+
 </script>

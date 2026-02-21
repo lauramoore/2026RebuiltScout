@@ -124,7 +124,9 @@ async function setupFirestoreListener() {
         match: matchNumber,
         scout: userName.value,
         lastUpdated: new Date(),
-        auton: {},
+        auton: {
+          preload: {},
+        },
         teleop: {},
         endgame: {},
         observations: { categories: [], notes: '' }
@@ -185,7 +187,6 @@ async function saveScoutData() {
 </script>
 
 <style scoped>
-/* Add some basic styling for the nav links to look like tabs */
 nav {
   display: flex;
   gap: 1rem;
@@ -210,5 +211,14 @@ form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+previousCycle {
+  margin: 1em;
+}
+nextCycle {
+  margin: 1em;
+}
+addCyle {
+  margin: 1em;
 }
 </style>

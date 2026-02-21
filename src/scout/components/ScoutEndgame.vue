@@ -1,95 +1,84 @@
 <template>
-  <h1>EndGame</h1>
+  <h1>Endgame</h1>
   <div>
-    <h2>Climb</h2>
-    <div>
-    <label>
-      <input type="radio" value="1" v-model="climb" />L1
-    </label>
-    <label>
-      <input type="radio" value="2" v-model="climb" />L2
-    </label>
-    <label>
-      <input type="radio" value="3" v-model="climb" />L3
-    </label>
+     <h2>Climb</h2>
      <label>
-      <input type="checkbox" v-model="climbAborted" />Not Successful
-    </label>
-    </div>
+       <input type="radio" value="L1" v-model="endGameClimb" /> L1
+     </label>
+     <label>
+       <input type="radio" value="L2" v-model="endGameClimb" /> L2
+     </label>
+     <label>
+       <input type="radio" value="L3" v-model="endGameClimb" /> L3
+     </label>
+     <label>
+       <input type="checkbox" v-model="endGameClimbFail" /> Failed
+     </label>
   </div>
-  <h2>Additional Fuel</h2>
-    <h3>Scoring</h3>
-    <div>
-        <button @click="previousScoringCycle" :disabled="scoringCurrentIndex === 0" type="button">Previous Cycle</button>
-        <span>Cycle {{ scoringCurrentIndex + 1 }} of {{ (model.scoring || []).length }}</span>
-        <button @click="nextScoringCycle" :disabled="scoringCurrentIndex >= (model.scoring || []).length - 1" type="button">Next Cycle</button>
-        <button @click="addScoringCycle" type="button">New Cycle</button>
-    </div>
-    <Scoring v-model="currentScoringCycle" />
+  <div>
+    <h2>Cycles</h2>
+    <router-link :to="{ name: 'scout-endgame-scoring', params: $route.params }" custom v-slot="{ navigate, isActive }">
+      <button :class="{ active: isActive }" @click="navigate">Scoring</button>
+    </router-link>
+    <router-link :to="{ name: 'scout-endgame-defense', params: $route.params }" custom v-slot="{ navigate, isActive }">
+      <button :class="{ active: isActive }" @click="navigate">Defense</button>
+    </router-link>
+  </div>
+
+  <!-- Display title from route meta -->
+  <h2 v-if="$route.meta.title">{{ $route.meta.title }}</h2>
+
+  <CycleNavigator v-if="currentCycleType" :current-index="currentIndex" :total-cycles="cycles.length" @previous="previousCycle" @next="nextCycle" @add="addCycle" new-button-text="New Cycle" />
+
+  <!-- The router will render the matched child component here. -->
+  <!-- We use v-slot to pass the correct v-model (a single cycle object) to the rendered component. -->
+  <router-view v-slot="{ Component }">
+    <component :is="Component" v-model="currentCycleModel" />
+  </router-view>
 </template>
 <script setup>
-import { computed, ref, watch } from 'vue';
-import Scoring from './ScoreCycle.vue';
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { useCycleManager } from '../composables/useCycleManager.js';
+import CycleNavigator from './CycleNavigator.vue';
 
 const props = defineProps({
   modelValue: Object
 });
 
 const emit = defineEmits(['update:modelValue']);
+const route = useRoute();
 
 const model = computed({
   get: () => props.modelValue || {},
   set: (value) => emit('update:modelValue', value)
 });
 
-const climb = computed({
-  get: () => model.value.climb,
-  set: (value) => { model.value.climb = value; }
+const endGameClimb = computed({
+  get: () => model.value.endGameClimb,
+  set: (val) => model.value = { ...model.value, endGameClimb: val }
 });
 
-const climbAborted = computed({
-  get: () => model.value.climbAborted,
-  set: (value) => { model.value.climbAborted = value; }
+const endGameClimbFail = computed({
+  get: () => model.value.endGameClimbFail,
+  set: (val) => model.value = { ...model.value, endGameClimbFail: val }
 });
 
-// --- Scoring Cycles ---
-const scoringCurrentIndex = ref(0);
-
-watch(() => model.value.scoring, (newCycles) => {
-    if (!newCycles || newCycles.length === 0) {
-        model.value.scoring = [{}];
-    }
-    scoringCurrentIndex.value = (model.value.scoring?.length || 1) - 1;
-}, { immediate: true });
-
-const currentScoringCycle = computed({
-  get: () => (model.value.scoring || [])[scoringCurrentIndex.value] || {},
-  set: (value) => {
-    const newCycles = [...(model.value.scoring || [])];
-    newCycles[scoringCurrentIndex.value] = value;
-    model.value.scoring = newCycles;
-  }
+// Determine which type of cycle is active based on the route name
+const currentCycleType = computed(() => {
+  const routeName = String(route.name || '');
+  if (routeName.endsWith('scoring')) return 'scoring';
+  if (routeName.endsWith('defense')) return 'defense';
+  return null;
 });
 
-function addScoringCycle() {
-  const cycles = model.value.scoring || [];
-  const newCycles = [...cycles, {}];
-  model.value.scoring = newCycles;
-  scoringCurrentIndex.value = newCycles.length - 1;
-}
-
-function previousScoringCycle() {
-  if (scoringCurrentIndex.value > 0) {
-    scoringCurrentIndex.value--;
-  }
-}
-
-function nextScoringCycle() {
-  const cycles = model.value.scoring || [];
-  if (scoringCurrentIndex.value < cycles.length - 1) {
-    scoringCurrentIndex.value++;
-  }
-}
-
-
+const { currentIndex, cycles, currentCycleModel, addCycle, previousCycle, nextCycle } = useCycleManager(model, currentCycleType);
 </script>
+
+<style scoped>
+button.active {
+  background-color: #42b983;
+  color: white;
+  border-color: #42b983;
+}
+</style>

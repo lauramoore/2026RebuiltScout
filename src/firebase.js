@@ -3,6 +3,8 @@ import { getAuth, GoogleAuthProvider, onAuthStateChanged, connectAuthEmulator } 
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+import { getAnalytics } from "firebase/analytics";
+
 
 // these are local dev only - do not use in production
 // The configuration is loaded from environment variables for security and flexibility.
@@ -14,10 +16,12 @@ const firebaseConfig = {
     projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
     storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
     messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_APP_MEASURE_ID,
     appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
+
 
 const auth = getAuth(firebaseApp);
 const functions = getFunctions(firebaseApp);
@@ -35,6 +39,8 @@ if (window.location.hostname === 'localhost') {
   connectFirestoreEmulator(db, 'localhost', 8080 )
   self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
 }
+
+const analytics = getAnalytics(firebaseApp);
 
 const appCheck = initializeAppCheck(firebaseApp, {
   provider: new ReCaptchaV3Provider(import.meta.env.VITE_RECAPTCHA_SITE_KEY),

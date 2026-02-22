@@ -1,5 +1,12 @@
 {
   "projects": {
-    "default": "wrt-firebase-web-app"
+    "default": "wrt-firebase-web-app",
+    "walton": "wrt-firebase-web-app"
+  },
+  "targets": {},
+  "etags": {
+    "wrt-firebase-web-app": {
+      "extensionInstances": {}
+    }
   }
 }

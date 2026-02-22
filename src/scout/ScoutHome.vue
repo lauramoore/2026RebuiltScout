@@ -39,15 +39,22 @@ const error = ref(null);
 const userId = ref(null);
 const router = useRouter();
 
-let unsubscribe = null;
-let authUnsubscribe = null;
-const eventCode = 'gadal2026';
+let unsubscribeSchedule = null;
+let unsubscribeAuth = null;
+const eventCode = 'scout-training';
 
-onMounted(() => {
+function setupScheduleListener() {
+  // Ensure we don't create duplicate listeners if this function is ever called again.
+  if (unsubscribeSchedule) unsubscribeSchedule();
+
   const scheduleRef = collection(db, 'competitions', eventCode, 'schedule');
   const q = query(scheduleRef, orderBy('matchNumber', 'asc'));
 
-  unsubscribe = onSnapshot(q, (querySnapshot) => {
+  unsubscribeSchedule = onSnapshot(q, (querySnapshot) => {
+    // For debugging: log when a snapshot is received and its source.
+    console.log(
+      `Schedule snapshot received. From cache: ${querySnapshot.metadata.fromCache}, Documents: ${querySnapshot.size}`
+    );
     if (querySnapshot.empty) {
       matches.value = [];
       error.value = "No match data found. You may need to refresh the schedule from the settings.";
@@ -57,25 +64,33 @@ onMounted(() => {
     }
   }, (err) => {
     console.error("Firestore read failed:", err);
-    error.value = "Failed to load match schedule. " + err;
+    error.value = "Failed to load match schedule. " + err.message;
   });
+}
 
+onMounted(() => {
   const auth = getAuth();
-  authUnsubscribe = onAuthStateChanged(auth, (user) => {
+  unsubscribeAuth = onAuthStateChanged(auth, (user) => {
     if (user) {
       userId.value = user.uid;
+      // Now that we have an authenticated user, set up the listener.
+      setupScheduleListener();
     } else {
+      // Handle user logging out
       userId.value = null;
+      if (unsubscribeSchedule) unsubscribeSchedule();
+      matches.value = [];
+      error.value = "You must be logged in to view the schedule.";
     }
   });
 });
 
 onUnmounted(() => {
-  if (unsubscribe) {
-    unsubscribe();
+  if (unsubscribeSchedule) {
+    unsubscribeSchedule();
   }
-  if (authUnsubscribe) {
-    authUnsubscribe();
+  if (unsubscribeAuth) {
+    unsubscribeAuth();
   }
 });
 
@@ -96,9 +111,7 @@ async function scoutTeam(matchNumber, teamNumber) {
     // Navigate to the scouting form for the specific team.
     router.push({ name: 'scout-form', params: { event: eventCode, match: matchNumber, team: teamNumber } });
   } catch (err) {
-    console.error("Failed to create match scout document:", err);
-    error.value = `Failed to prepare for match scouting: ${err.message}`;
-    console.error("Failed to prepare for team scouting:", err);
+    console.error("Failed to navigate to scouting form:", err);
     error.value = `Failed to prepare for scouting: ${err.message}`;
   }
 }

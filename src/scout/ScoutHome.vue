@@ -51,10 +51,6 @@ function setupScheduleListener() {
   const q = query(scheduleRef, orderBy('matchNumber', 'asc'));
 
   unsubscribeSchedule = onSnapshot(q, (querySnapshot) => {
-    // For debugging: log when a snapshot is received and its source.
-    console.log(
-      `Schedule snapshot received. From cache: ${querySnapshot.metadata.fromCache}, Documents: ${querySnapshot.size}`
-    );
     if (querySnapshot.empty) {
       matches.value = [];
       error.value = "No match data found. You may need to refresh the schedule from the settings.";
@@ -73,7 +69,6 @@ onMounted(() => {
   unsubscribeAuth = onAuthStateChanged(auth, (user) => {
     if (user) {
       userId.value = user.uid;
-      // Now that we have an authenticated user, set up the listener.
       setupScheduleListener();
     } else {
       // Handle user logging out

@@ -1,6 +1,14 @@
 {
   "projects": {
-    "walton": "wrt-firebase-web-app",
-    "analog": "rebuilt-scout-2974"
+    "prod": "wrt-firebase-web-app",
+    "staging": "rebuilt-scout-2974"
+  },
+  "targets": {},
+  "etags": {
+    "rebuilt-scout-2974": {
+      "extensionInstances": {
+        "firestore-bigquery-export": "5d2e1f016ac0094b361089c54587afebb115317f4f80ecc762982131d889de9d"
+      }
+    }
   }
 }

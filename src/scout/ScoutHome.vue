@@ -5,23 +5,24 @@
     <thead>
     <tr>
       <th>Match#</th>
-      <th>Red 1</th>
-      <th>Red 2</th>
-      <th>Red 3</th>
-      <th>Blue 1</th>
-      <th>Blue 2</th>
-      <th>Blue 3</th>
+      <th class="team-red">Red 1</th>
+      <th class="team-red">Red 2</th>
+      <th class="team-red">Red 3</th>
+      <th class="team-blue">Blue 1</th>
+      <th class="team-blue">Blue 2</th>
+      <th class="team-blue">Blue 3</th>
+      <th>Summary</th>
     </tr>
   </thead>
   <tbody>
     <tr v-for="match in matches" :key="match.id">
       <td>{{ match.id }}</td>
-      <td class="clickable-team" @click="scoutTeam(match.id, match.red[0])">{{ match.red[0] }}</td>
-      <td class="clickable-team" @click="scoutTeam(match.id, match.red[1])">{{ match.red[1] }}</td>
-      <td class="clickable-team" @click="scoutTeam(match.id, match.red[2])">{{ match.red[2] }}</td>
-      <td class="clickable-team" @click="scoutTeam(match.id, match.blue[0])">{{ match.blue[0] }}</td>
-      <td class="clickable-team" @click="scoutTeam(match.id, match.blue[1])">{{ match.blue[1] }}</td>
-      <td class="clickable-team" @click="scoutTeam(match.id, match.blue[2])">{{ match.blue[2] }}</td>
+      <td class="clickable-team team-red" @click="scoutTeam(match.id, match.red[0])">{{ match.red[0] }}</td>
+      <td class="clickable-team team-red" @click="scoutTeam(match.id, match.red[1])">{{ match.red[1] }}</td>
+      <td class="clickable-team team-red" @click="scoutTeam(match.id, match.red[2])">{{ match.red[2] }}</td>
+      <td class="clickable-team team-blue" @click="scoutTeam(match.id, match.blue[0])">{{ match.blue[0] }}</td>
+      <td class="clickable-team team-blue" @click="scoutTeam(match.id, match.blue[1])">{{ match.blue[1] }}</td>
+      <td class="clickable-team team-blue" @click="scoutTeam(match.id, match.blue[2])">{{ match.blue[2] }}</td>
       <td class="clickable-team" @click="summarizeMatch(match.id)"> Match Summary </td>
     </tr>
   </tbody>
@@ -134,9 +135,70 @@ async function summarizeMatch(matchNumber) {
   margin-bottom: 1rem;
 }
 
+/* General table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  margin-top: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+th, td {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+}
+
+thead th {
+  background-color: #6c757d;
+  color: white;
+  font-weight: bold;
+}
+
+/* Alliance colors for header */
+th.team-red {
+  background-color: #c62828; /* Dark Red */
+}
+
+th.team-blue {
+  background-color: #1565c0; /* Dark Blue */
+}
+
+/* Default (odd) row colors for alliance cells */
+.team-red {
+  background-color: #d32f2f;
+  color: white;
+}
+.team-blue {
+  background-color: #1976d2;
+  color: white;
+}
+
+/* Alternating (even) row colors */
+tbody tr:nth-child(even) {
+  background-color: #f8f9fa; /* Light grey for non-team cells */
+}
+tbody tr:nth-child(even) .team-red {
+  background-color: #ef5350; /* Lighter Red */
+}
+tbody tr:nth-child(even) .team-blue {
+  background-color: #42a5f5; /* Lighter Blue */
+}
+
 .clickable-team {
   cursor: pointer;
   text-decoration: underline;
-  color: blue;
+  color: #ffffff;
+}
+
+/* Remove underline from colored cells and make text bold */
+.clickable-team.team-red,
+.clickable-team.team-blue {
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.clickable-team:hover {
+  filter: brightness(1.15);
 }
 </style>

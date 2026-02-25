@@ -4,26 +4,24 @@
   <table>
     <thead>
     <tr>
-      <th>Match#</th>
+      <th></th>
       <th class="team-red">Red 1</th>
       <th class="team-red">Red 2</th>
       <th class="team-red">Red 3</th>
       <th class="team-blue">Blue 1</th>
       <th class="team-blue">Blue 2</th>
       <th class="team-blue">Blue 3</th>
-      <th>Summary</th>
     </tr>
   </thead>
   <tbody>
     <tr v-for="match in matches" :key="match.id">
-      <td>{{ match.id }}</td>
+      <td class="clickable-team" @click="summarizeMatch(match.id)">{{ match.id }}</td>
       <td class="clickable-team team-red" @click="scoutTeam(match.id, match.red[0])">{{ match.red[0] }}</td>
       <td class="clickable-team team-red" @click="scoutTeam(match.id, match.red[1])">{{ match.red[1] }}</td>
       <td class="clickable-team team-red" @click="scoutTeam(match.id, match.red[2])">{{ match.red[2] }}</td>
       <td class="clickable-team team-blue" @click="scoutTeam(match.id, match.blue[0])">{{ match.blue[0] }}</td>
       <td class="clickable-team team-blue" @click="scoutTeam(match.id, match.blue[1])">{{ match.blue[1] }}</td>
       <td class="clickable-team team-blue" @click="scoutTeam(match.id, match.blue[2])">{{ match.blue[2] }}</td>
-      <td class="clickable-team" @click="summarizeMatch(match.id)"> Match Summary </td>
     </tr>
   </tbody>
   </table>
@@ -145,12 +143,11 @@ table {
 }
 
 th, td {
-  padding: 0.75rem;
+  padding: 0.5rem;
   border: 1px solid #ddd;
 }
 
 thead th {
-  background-color: #6c757d;
   color: white;
   font-weight: bold;
 }
@@ -174,14 +171,10 @@ th.team-blue {
   color: white;
 }
 
-/* Alternating (even) row colors */
-tbody tr:nth-child(even) {
-  background-color: #f8f9fa; /* Light grey for non-team cells */
-}
-tbody tr:nth-child(even) .team-red {
+tbody tr:nth-child(odd) .team-red {
   background-color: #ef5350; /* Lighter Red */
 }
-tbody tr:nth-child(even) .team-blue {
+tbody tr:nth-child(odd) .team-blue {
   background-color: #42a5f5; /* Lighter Blue */
 }
 

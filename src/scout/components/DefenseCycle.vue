@@ -1,24 +1,18 @@
 <template>
   <h3>Location</h3>
-  <div>
+  <div class="form-group form-group-grid">
     <label>
-      <input type="radio" value="neutral" v-model="defenseLocation" /> Neutral
+      <input type="radio" value="neutral" v-model="defenseZone" /> Neutral
     </label>
     <label>
-      <input type="radio" value="opposing" v-model="defenseLocation" /> Opposing
+      <input type="radio" value="opposing" v-model="defenseZone" /> Opposing
     </label>
     <label>
-      <input type="radio" value="depot" v-model="defenseLocation" /> Depot
-    </label>
-    <label>
-      <input type="radio" value="outpost" v-model="defenseLocation" /> Outpost
-    </label>
-    <label>
-      <input type="radio" value="home" v-model="defenseLocation" /> Home
+      <input type="radio" value="home" v-model="defenseZone" /> Home
     </label>
   </div>
   <h3>Effectiveness</h3>
-  <div>
+  <div class="form-group">
     <label>
       <input type="radio" :value="1" v-model="effective" /> minor
     </label>
@@ -30,7 +24,7 @@
     </label>
   </div>
   <h3>Penalties</h3>
-  <div>
+  <div class="form-group">
     <label>
       <input type="radio" :value="0" v-model="penalties" /> None
     </label>
@@ -41,7 +35,7 @@
       <input type="radio" :value="7" v-model="penalties" /> 3+
     </label>
   </div>
-  <div>
+  <div class="form-group">
     <label>
       <input type="checkbox" v-model="majorFoul" /> Yellow Card
     </label>
@@ -70,9 +64,31 @@ const useVModel = (key) => {
     });
 };
 
-const defenseLocation = useVModel('defenseLocation');
+const defenseZone = useVModel('defenseLocation');
 const effective = useVModel('effective');
 const penalties = useVModel('penalties');
 const majorFoul = useVModel('majorFoul');
 const techFoul = useVModel('techFoul');
 </script>
+
+<style scoped>
+.form-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+}
+
+.form-group-grid {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: start;
+}
+</style>

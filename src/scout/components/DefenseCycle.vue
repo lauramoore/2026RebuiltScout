@@ -35,10 +35,10 @@
       <input type="radio" :value="0" v-model="penalties" /> None
     </label>
     <label>
-      <input type="radio" :value="1" v-model="penalties" /> 1-2
+      <input type="radio" :value="3" v-model="penalties" /> 1-2
     </label>
     <label>
-      <input type="radio" :value="5" v-model="penalties" /> 3+
+      <input type="radio" :value="7" v-model="penalties" /> 3+
     </label>
   </div>
   <div>

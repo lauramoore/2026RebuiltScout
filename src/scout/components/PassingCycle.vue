@@ -16,7 +16,7 @@
       <input type="radio" value="3" v-model="capacity" /> 1/3 - 2/3
     </label>
     <label>
-      <input type="radio" value="5" v-model="capacity" /> 2/3 - Full
+      <input type="radio" value="7" v-model="capacity" /> 2/3 - Full
     </label>
   </div>
   <h3>Emptying</h3>

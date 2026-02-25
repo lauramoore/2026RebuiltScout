@@ -9,6 +9,11 @@
       "extensionInstances": {
         "firestore-bigquery-export": "5d2e1f016ac0094b361089c54587afebb115317f4f80ecc762982131d889de9d"
       }
+    },
+    "wrt-firebase-web-app": {
+      "extensionInstances": {
+        "firestore-bigquery-export": "fb624d1c1bca9869ecd15762b354cfbb731df72e879cf8a25191a4073a662e29"
+      }
     }
   }
 }

@@ -2,6 +2,11 @@
   <div v-if="error" class="error-message">{{ error }}</div>
   <div v-else>
     <header>
+      <router-link class="back-button" :to="{ name: 'home', params: { event: route.params.event } }">
+        <svg class="home-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
+        </svg>
+      </router-link>
       <h1>Match #{{ route.params.match }} Team #{{ route.params.team }}</h1>
       <nav>
         <!-- Use named routes for robust navigation -->
@@ -12,25 +17,19 @@
       </nav>
     </header>
 
-    <form @submit.prevent="saveScoutData">
-      <!--
-        The router will render the correct component here (ScoutAuton, ScoutTeleop, etc.).
-        We use the v-slot API to pass the correct v-model to the rendered component.
-      -->
-      <router-view v-slot="{ Component }">
-        <component :is="Component" v-model="currentModel" />
-      </router-view>
-
-      <button type="submit" :disabled="isSaving">
-        {{ isSaving ? 'Saving...' : 'Save' }}
-      </button>
-    </form>
+    <!--
+      The router will render the correct component here (ScoutAuton, ScoutTeleop, etc.).
+      We use the v-slot API to pass the correct v-model to the rendered component.
+    -->
+    <router-view v-slot="{ Component }">
+      <component :is="Component" v-model="currentModel" />
+    </router-view>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, computed, toRaw } from 'vue';
-import { useRoute} from 'vue-router';
+import { useRoute, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router';
 import { db } from '../firebase.js';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -38,7 +37,6 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 // Components are now loaded by the router, so direct imports are no longer needed.
 
 const route = useRoute();
-//const router = useRouter();
 
 const formData = reactive({
   auton: {},
@@ -100,6 +98,17 @@ onMounted(() => {
   });
 });
 
+// Save data whenever the user navigates between scouting sections.
+onBeforeRouteUpdate(async () => {
+  // isSaving check in saveScoutData will prevent concurrent saves.
+  await saveScoutData();
+});
+
+// Save data when the user navigates away from the scouting page entirely.
+onBeforeRouteLeave(async () => {
+  await saveScoutData();
+});
+
 async function setupFirestoreListener() {
   if (!userId.value) return;
 
@@ -157,6 +166,10 @@ onUnmounted(() => {
 });
 
 async function saveScoutData() {
+  // Prevent concurrent saves if user clicks nav links quickly.
+  if (isSaving.value) {
+    return;
+  }
   if (!docRef) {
     error.value = "Cannot save, database connection not established.";
     return;
@@ -203,6 +216,28 @@ nav a.router-link-active {
   background-color: #42b983;
   color: white;
   border-color: #42b983;
+}
+.back-button {
+  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #42b983;
+  border-radius: 4px;
+  text-decoration: none;
+  color: white;
+  background-color: #42b983;
+}
+.back-button:hover {
+  background-color: #3aa873;
+  border-color: #3aa873;
+}
+.home-icon {
+  width: 1.2em;
+  height: 1.2em;
+  fill: currentColor;
 }
 .error-message {
   color: red;

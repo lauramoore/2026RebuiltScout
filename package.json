@@ -17,7 +17,6 @@
     "prod:ui": "vite build --mode prod",
     "staging": "npm run staging:ui && npm run build:functions",
     "staging:ui": "vite build --mode staging",
-
     "preview": "vite preview",
     "test:unit": "vitest",
     "lint": "eslint . --fix",
@@ -41,6 +40,7 @@
     "jsdom": "^26.1.0",
     "prettier": "3.6.2",
     "vite": "^7.0.6",
+    "vite-plugin-pwa": "^1.2.0",
     "vite-plugin-vue-devtools": "^8.0.0",
     "vitest": "^3.2.4"
   }

@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, connectAuthEmulator } from 'firebase/auth';
-import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
+import { connectFirestoreEmulator, initializeFirestore, persistentLocalCache, getFirestore} from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 import { getAnalytics } from "firebase/analytics";
@@ -22,15 +22,15 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 
+const db = setupFirestore(firebaseApp);
 
 const auth = getAuth(firebaseApp);
 const functions = getFunctions(firebaseApp);
-const db = getFirestore(firebaseApp);
 
 
 const authProvider = new GoogleAuthProvider();
 authProvider.setCustomParameters({
-  hd: "waltonrobotics.org" //ensure everybody uses the correct domain
+  hd: "waltonrobotics.org", //ensure everybody uses the correct domain
 });
 
 if (window.location.hostname === 'localhost') {
@@ -40,12 +40,35 @@ if (window.location.hostname === 'localhost') {
   self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
 }
 
-const analytics = getAnalytics(firebaseApp);
+ getAnalytics(firebaseApp);
 
-const appCheck = initializeAppCheck(firebaseApp, {
-  provider: new ReCaptchaV3Provider(import.meta.env.VITE_RECAPTCHA_SITE_KEY),
-  isTokenAutoRefreshEnabled: true
-});
+ initializeAppCheck(firebaseApp, {
+   provider: new ReCaptchaV3Provider(import.meta.env.VITE_RECAPTCHA_SITE_KEY),
+   isTokenAutoRefreshEnabled: true
+ });
+
+function setupFirestore(firebaseApp) {
+
+try {
+  // Initialize Firestore with persistent cache
+  const db = initializeFirestore(firebaseApp, {
+    localCache: persistentLocalCache({ })
+  });
+  return db;
+} catch (err) {
+  if (err.code === 'failed-precondition') {
+    // This error happens if persistence is enabled in multiple tabs.
+    console.warn('Firestore persistence failed: multiple tabs open. Falling back to memory cache.');
+  } else if (err.code === 'unimplemented') {
+    // This error happens if the browser doesn't support IndexedDB.
+    console.warn('Firestore persistence failed: browser does not support it. Falling back to memory cache.');
+  } else {
+    console.error('An unexpected error occurred during Firestore initialization:', err);
+  }
+  // If persistence fails, fallback to in-memory persistence.
+  return getFirestore(firebaseApp);
+}
+}
 
 
 // Re-export what's needed in other parts of the app

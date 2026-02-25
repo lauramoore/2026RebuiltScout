@@ -256,4 +256,17 @@ nextCycle {
 addCyle {
   margin: 1em;
 }
+
+/* Responsive Navigation for Mobile */
+@media screen and (max-width: 600px) {
+  nav {
+    /* Allow flex items to shrink if needed */
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  nav a {
+    padding: 0.5rem; /* Reduce padding to help items fit */
+  }
+}
 </style>

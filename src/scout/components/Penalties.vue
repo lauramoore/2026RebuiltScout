@@ -1,27 +1,7 @@
 <template>
-  <h3>Location</h3>
   <div class="form-group form-group-grid">
-    <label>
-      <input type="radio" value="neutral" v-model="defenseZone" /> Neutral
-    </label>
-    <label>
-      <input type="radio" value="opposing" v-model="defenseZone" /> Opposing
-    </label>
-    <label>
-      <input type="radio" value="home" v-model="defenseZone" /> Home
-    </label>
-  </div>
-  <h3>Effectiveness</h3>
-  <div class="form-group">
-    <label>
-      <input type="radio" :value="1" v-model="effective" /> minor
-    </label>
-    <label>
-      <input type="radio" :value="3" v-model="effective" /> decent
-    </label>
-    <label>
-      <input type="radio" :value="7" v-model="effective" /> excellent
-    </label>
+     <button>-</button>Penalties: {{ penalties }}<button>+</button>
+     <button>-</button>Fouls: {{ fouls }}<button>+</button>
   </div>
 </template>
 
@@ -44,8 +24,8 @@ const useVModel = (key) => {
     });
 };
 
-const defenseZone = useVModel('defenseLocation');
-const effective = useVModel('effective');
+const penalties = useVModel('penalties');
+const fouls = useVModel('fouls');
 </script>
 
 <style scoped>

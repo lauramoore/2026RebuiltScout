@@ -2,11 +2,6 @@
   <div v-if="error" class="error-message">{{ error }}</div>
   <div v-else>
     <header>
-      <router-link class="back-button" :to="{ name: 'home', params: { event: route.params.event } }">
-        <svg class="home-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
-        </svg>
-      </router-link>
       <h1>Match #{{ route.params.match }} Team #{{ route.params.team }}</h1>
       <nav>
         <!-- Use named routes for robust navigation -->
@@ -24,6 +19,8 @@
     <router-view v-slot="{ Component }">
       <component :is="Component" v-model="currentModel" />
     </router-view>
+
+
   </div>
 </template>
 
@@ -138,7 +135,8 @@ async function setupFirestoreListener() {
         },
         teleop: {},
         endgame: {},
-        observations: { categories: [], notes: '' }
+        observations: { categories: [], notes: '' },
+        penalties:{}
       };
       await setDoc(docRef, initialData, { merge: true });
 
@@ -216,28 +214,6 @@ nav a.router-link-active {
   background-color: #42b983;
   color: white;
   border-color: #42b983;
-}
-.back-button {
-  display: inline-block;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  padding: 0.5rem 1rem;
-  border: 1px solid #42b983;
-  border-radius: 4px;
-  text-decoration: none;
-  color: white;
-  background-color: #42b983;
-}
-.back-button:hover {
-  background-color: #3aa873;
-  border-color: #3aa873;
-}
-.home-icon {
-  width: 1.2em;
-  height: 1.2em;
-  fill: currentColor;
 }
 .error-message {
   color: red;

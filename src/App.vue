@@ -1,10 +1,18 @@
 <script setup>
   import { RouterView } from 'vue-router';
+  import { useRoute } from 'vue-router';
+
+  const route = useRoute();
 </script>
 
 <template>
   <header>
-
+     <router-link class="home-button" :to="route.params.event ? { name: 'home', params: { event: route.params.event } } : '/'">
+        <svg class="home-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
+        </svg>
+        Home
+      </router-link>
   </header>
   <RouterView />
 </template>
@@ -42,6 +50,30 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
+}
+
+.home-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #42b983;
+  border-radius: 4px;
+  text-decoration: none;
+  color: white;
+  background-color: #42b983;
+}
+
+.home-button:hover {
+  background-color: #3aa873;
+  border-color: #3aa873;
+}
+
+.home-icon {
+  width: 1.2em;
+  height: 1.2em;
+  fill: currentColor;
 }
 
 @media (min-width: 1024px) {

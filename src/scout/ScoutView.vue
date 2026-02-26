@@ -1,16 +1,18 @@
 <template>
   <div v-if="error" class="error-message">{{ error }}</div>
   <div v-else>
+    <h1>Match #{{ route.params.match }} Team #{{ route.params.team }}</h1>
     <header>
-      <h1>Match #{{ route.params.match }} Team #{{ route.params.team }}</h1>
       <nav>
         <!-- Use named routes for robust navigation -->
         <router-link :to="{ name: 'scout-auton', params: route.params }">Auton</router-link>
         <router-link :to="{ name: 'scout-teleop', params: route.params }">Teleop</router-link>
-        <router-link :to="{ name: 'scout-endgame', params: route.params }">Endgame</router-link>
         <router-link :to="{ name: 'scout-observations', params: route.params }">Observations</router-link>
       </nav>
+
     </header>
+
+    <Penalties v-model="formData.penalties" />
 
     <!--
       The router will render the correct component here (ScoutAuton, ScoutTeleop, etc.).
@@ -30,6 +32,7 @@ import { useRoute, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router';
 import { db } from '../firebase.js';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import Penalties from './components/Penalties.vue';
 
 // Components are now loaded by the router, so direct imports are no longer needed.
 
@@ -38,8 +41,8 @@ const route = useRoute();
 const formData = reactive({
   auton: {},
   teleop: {},
-  endgame: {},
-  observations: { categories: [], notes: '' }
+  observations: { categories: [], notes: '' },
+  penalties: {}
 });
 const error = ref(null);
 const isSaving = ref(false);
@@ -56,7 +59,6 @@ const currentSection = computed(() => {
   const routeName = String(route.name || '');
   if (routeName.startsWith('scout-auton')) return 'auton';
   if (routeName.startsWith('scout-teleop')) return 'teleop';
-  if (routeName.startsWith('scout-endgame')) return 'endgame';
   if (routeName.startsWith('scout-observations')) return 'observations';
   return null;
 });
@@ -134,7 +136,6 @@ async function setupFirestoreListener() {
           preload: {},
         },
         teleop: {},
-        endgame: {},
         observations: { categories: [], notes: '' },
         penalties:{}
       };
@@ -147,6 +148,7 @@ async function setupFirestoreListener() {
         formData.teleop = remoteData.teleop || {};
         formData.endgame = remoteData.endgame || {};
         formData.observations = remoteData.observations || { categories: [], notes: '' };
+        formData.penalties = remoteData.penalties || {};
       }
     }, (err) => {
       console.error("Error listening to scout document:", err);

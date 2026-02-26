@@ -1,7 +1,12 @@
 <template>
   <div class="form-group form-group-grid">
-     <button>-</button>Penalties: {{ penalties }}<button>+</button>
-     <button>-</button>Fouls: {{ fouls }}<button>+</button>
+     <button type="button" @click="penalties = Math.max(0, (penalties || 0) - 1)">-</button>
+     <span>Penalties: {{ penalties || 0 }}</span>
+     <button type="button" @click="penalties = (penalties || 0) + 1">+</button>
+
+     <button type="button" @click="fouls = Math.max(0, (fouls || 0) - 1)">-</button>
+     <span>Fouls: {{ fouls || 0 }}</span>
+     <button type="button" @click="fouls = (fouls || 0) + 1">+</button>
   </div>
 </template>
 
@@ -11,7 +16,7 @@ import { computed } from 'vue';
 const props = defineProps({
   modelValue: {
     type: Object,
-    default: () => ({})
+    default: () => ({ penalties: 0, fouls: 0 })
   }
 });
 
@@ -47,5 +52,7 @@ const fouls = useVModel('fouls');
   display: grid;
   grid-template-columns: repeat(3, auto);
   justify-content: start;
+  gap: 0.5rem;
+  align-items: center;
 }
 </style>

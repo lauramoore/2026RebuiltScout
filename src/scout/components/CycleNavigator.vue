@@ -3,7 +3,7 @@
     <button @click="$emit('previous')" :disabled="currentIndex === 0" type="button">&lt;</button>
     <span>Cycle {{ currentIndex + 1 }} of {{ totalCycles }}</span>
     <button @click="$emit('next')" :disabled="currentIndex >= totalCycles - 1" type="button">&gt;</button>
-    <button @click="$emit('add')" type="button">{{ newButtonText }}</button>
+    <button @click="$emit('add')" type="button">New</button>
   </div>
 </template>
 
@@ -16,10 +16,6 @@ defineProps({
   totalCycles: {
     type: Number,
     required: true
-  },
-  newButtonText: {
-    type: String,
-    default: 'New'
   }
 });
 

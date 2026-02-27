@@ -1,14 +1,14 @@
 <template>
-  <h3>Climb</h3>
+  <h2>Climb</h2>
   <div class="form-group">
     <label>
-      <input type="radio" value="0" v-model="climbed" />None
+      <input type="radio" value="0" v-model="climbLevel" />None
     </label>
      <label>
-      <input type="radio" value="1" v-model="climbed" />1
+      <input type="radio" value="1" v-model="climbLevel" />1
     </label>
      <label>
-      <input type="radio" value="-1" />Failed
+      <input type="radio" value="-1"  v-model="climbLevel" />Failed
     </label>
   </div>
   <div class="form-group">

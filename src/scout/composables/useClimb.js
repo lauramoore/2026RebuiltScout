@@ -12,13 +12,11 @@ export function useClimb(climbModel) {
 
   const climbLevel = useClimbProperty('level');
   const climbStart = useClimbProperty('start');
-  const climbFailed = useClimbProperty('failed');
   const climbDismount = useClimbProperty('dismount')
 
   return {
     climbLevel,
     climbStart,
-    climbFailed,
     climbDismount
   };
 }

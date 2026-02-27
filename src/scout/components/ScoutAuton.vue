@@ -23,7 +23,7 @@
   </div>
 
   <div>
-    <AutonClimb />
+    <AutonClimb  v-model="climb" />
   </div>
 </template>
 <script setup>
@@ -43,15 +43,16 @@ const model = computed({
   set: (value) => emit('update:modelValue', value)
 });
 
-const climb = computed({
-  get: () => model.value.autonClimb || false,
-  set: (val) => model.value = { ...model.value, autonClimb: val }
-});
-
 const startAt = computed({
   get: () => model.value.startAt || {} ,
   set: (val) => model.value = { ...model.value, startAt: val }
 });
+
+const climb = computed({
+  get: () => model.value.climb || {} ,
+  set: (val) => model.value = { ...model.value, climb: val }
+});
+
 
 const cycleKey = ref('scoring');
 

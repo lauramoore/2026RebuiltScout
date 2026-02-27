@@ -12,13 +12,14 @@
     </router-link>
   </div>
 
-  <CycleNavigator v-if="currentCycleType" :current-index="currentIndex" :total-cycles="cycles.length" @previous="previousCycle" @next="nextCycle" @add="addCycle" new-button-text="New Cycle" />
+  <CycleNavigator v-if="currentCycleType" :current-index="currentIndex" :total-cycles="cycles.length" @previous="previousCycle" @next="nextCycle" @add="addCycle" />
 
   <!-- The router will render the matched child component here. -->
   <!-- We use v-slot to pass the correct v-model (a single cycle object) to the rendered component. -->
   <router-view v-slot="{ Component }">
     <component :is="Component" v-model="currentCycleModel" />
   </router-view>
+  
   <EndgameClimb v-model="climb" />
 </template>
 <script setup>

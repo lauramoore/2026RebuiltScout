@@ -12,9 +12,6 @@
     </router-link>
   </div>
 
-  <!-- Display title from route meta -->
-  <h2 v-if="$route.meta.title">{{ $route.meta.title }}</h2>
-
   <CycleNavigator v-if="currentCycleType" :current-index="currentIndex" :total-cycles="cycles.length" @previous="previousCycle" @next="nextCycle" @add="addCycle" new-button-text="New Cycle" />
 
   <!-- The router will render the matched child component here. -->
@@ -22,12 +19,14 @@
   <router-view v-slot="{ Component }">
     <component :is="Component" v-model="currentCycleModel" />
   </router-view>
+  <EndgameClimb v-model="climb" />
 </template>
 <script setup>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useCycleManager } from '../composables/useCycleManager.js';
 import CycleNavigator from './CycleNavigator.vue';
+import EndgameClimb from './EndgameClimb.vue';
 
 const props = defineProps({
   modelValue: Object
@@ -35,10 +34,17 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 const route = useRoute();
-
 const model = computed({
   get: () => props.modelValue || {},
   set: (value) => emit('update:modelValue', value)
+});
+
+// This computed property will be the v-model for the EndgameClimb component.
+const climb = computed({
+  get: () => model.value.climb || {},
+  set: (climbValue) => {
+    model.value = { ...model.value, climb: climbValue };
+  }
 });
 
 // Determine which type of cycle is active based on the route name

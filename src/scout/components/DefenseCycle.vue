@@ -14,13 +14,13 @@
   <h3>Effectiveness</h3>
   <div class="form-group">
     <label>
-      <input type="radio" :value="1" v-model="effective" /> minor
+      <input type="radio" :value="1" v-model="effective" /> 1
     </label>
     <label>
-      <input type="radio" :value="3" v-model="effective" /> decent
+      <input type="radio" :value="3" v-model="effective" /> 3
     </label>
     <label>
-      <input type="radio" :value="7" v-model="effective" /> excellent
+      <input type="radio" :value="7" v-model="effective" /> 7
     </label>
   </div>
 </template>

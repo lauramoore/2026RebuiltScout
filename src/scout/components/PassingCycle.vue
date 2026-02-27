@@ -1,5 +1,5 @@
 <template>
-  <h3>Collection</h3>
+  <h3>From</h3>
   <div class="form-group">
     <label>
       <input type="radio" value="neutral" v-model="fromLocation" /> Neutral
@@ -8,18 +8,7 @@
       <input type="radio" value="opposing" v-model="fromLocation" /> Opposing
     </label>
   </div>
-  <div class="form-group">
-    <label>
-      <input type="radio" value="1" v-model="capacity" /> 0 - 1/3
-    </label>
-    <label>
-      <input type="radio" value="3" v-model="capacity" /> 1/3 - 2/3
-    </label>
-    <label>
-      <input type="radio" value="7" v-model="capacity" /> 2/3 - Full
-    </label>
-  </div>
-  <h3>Emptying</h3>
+  <h3>TO</h3>
   <div class="form-group form-group-grid">
     <label>
       <input type="radio" value="home" v-model="toLocation" /> Home
@@ -27,38 +16,49 @@
     <label>
       <input type="radio" value="neutral" v-model="toLocation" /> Neutral
     </label>
+  </div>
+   <div class="form-group">
+    <h3>Capacity</h3>
     <label>
-      <input type="radio" value="depot" v-model="toLocation" /> Depot
+      <input type="radio" value="1" v-model="capacity" /> 1
     </label>
     <label>
-      <input type="radio" value="outpost" v-model="toLocation" /> Outpost
+      <input type="radio" value="3" v-model="capacity" /> 3
+    </label>
+    <label>
+      <input type="radio" value="7" v-model="capacity" /> 7
+    </label>
+  </div>
+  <div class="form-group">
+     <h3>Rate</h3>
+    <label>
+      <input type="radio" value="1" v-model="speed" />1
+    </label>
+    <label>
+      <input type="radio" value="3" v-model="speed" /> 3
+    </label>
+    <label>
+      <input type="radio" value="7" v-model="speed" /> 7
+    </label>
+  </div>
+   <div class="form-group">
+    <h3>Accuracy</h3>
+    <label>
+      <input type="radio" value="1" v-model="accuracy" /> 1
+    </label>
+    <label>
+      <input type="radio" value="3" v-model="accuracy" /> 3
+    </label>
+    <label>
+      <input type="radio" value="7" v-model="accuracy" /> 7
     </label>
   </div>
   <div class="form-group">
     <label>
       <input type="checkbox" value="true" v-model="mobileShotCapable" /> Shot on the Move
     </label>
-  </div>
-  <div class="form-group">
     <label>
-      <input type="radio" value="1" v-model="speed" />pew
-    </label>
-    <label>
-      <input type="radio" value="3" v-model="speed" /> pew-pew
-    </label>
-    <label>
-      <input type="radio" value="7" v-model="speed" /> avalanche!
-    </label>
-  </div>
-   <div class="form-group">
-    <label>
-      <input type="radio" value="1" v-model="accuracy" /> wild
-    </label>
-    <label>
-      <input type="radio" value="3" v-model="accuracy" /> ballpark
-    </label>
-    <label>
-      <input type="radio" value="7" v-model="accuracy" /> bullseye
+      <input type="checkbox" value="true" v-model="bulldozer" /> Bulldozer
     </label>
   </div>
 </template>

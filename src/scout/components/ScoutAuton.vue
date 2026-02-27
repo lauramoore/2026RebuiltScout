@@ -1,52 +1,19 @@
 <template>
   <h1>Auton</h1>
   <div>
-    <h2>Preload</h2>
+     <h2>Start Location</h2>
 
     <div class="form-group">
       <label>
-        <input type="radio" value="0" v-model="preload.count" /> 0
+        <input type="radio" value="0" v-model="startAt" /> Depot
       </label>
       <label>
-        <input type="radio" value="2" v-model="preload.count" /> 2
+        <input type="radio" value="2" v-model="startAt" /> Hub
       </label>
       <label>
-        <input type="radio" value="4" v-model="preload.count" /> 4
-      </label>
-      <label>
-        <input type="radio" value="6" v-model="preload.count" /> 6
-      </label>
-      <label>
-        <input type="radio" value="8" v-model="preload.count" /> 8
+        <input type="radio" value="4" v-model="startAt" /> Outpost
       </label>
     </div>
-    <div class="form-group">
-    <label>
-      <input type="radio" value="1" v-model="preload.speed" />pew
-    </label>
-    <label>
-      <input type="radio" value="3" v-model="preload.speed" /> pew-pew
-    </label>
-    <label>
-      <input type="radio" value="7" v-model="preload.speed" /> avalanche!
-    </label>
-  </div>
-   <div class="form-group">
-    <label>
-      <input type="radio" value="1" v-model="preload.accuracy" /> wild
-    </label>
-    <label>
-      <input type="radio" value="3" v-model="preload.accuracy" /> on target
-    </label>
-    <label>
-      <input type="radio" value="7" v-model="preload.accuracy" /> bullseye
-    </label>
-  </div>
-  <div class="form-group">
-     <label>
-      <input type="checkbox" value="true" v-model="preload.mobileShot" /> on the move
-    </label>
-  </div>
   </div>
 
   <div>
@@ -56,10 +23,7 @@
   </div>
 
   <div>
-    <h2>L1 Climb</h2>
-    <div class="form-group">
-      <label> <input type="checkbox" v-model="climb" /> Successful </label>
-    </div>
+    <AutonClimb />
   </div>
 </template>
 <script setup>
@@ -67,6 +31,7 @@ import { computed, ref } from 'vue';
 import ScoreCycle from './ScoreCycle.vue';
 import CycleNavigator from './CycleNavigator.vue';
 import { useCycleManager } from '../composables/useCycleManager.js';
+import AutonClimb from './AutonClimb.vue'
 
 const props = defineProps({
   modelValue: Object
@@ -83,9 +48,9 @@ const climb = computed({
   set: (val) => model.value = { ...model.value, autonClimb: val }
 });
 
-const preload = computed({
-  get: () => model.value.preload || {} ,
-  set: (val) => model.value = { ...model.value, preload: val }
+const startAt = computed({
+  get: () => model.value.startAt || {} ,
+  set: (val) => model.value = { ...model.value, startAt: val }
 });
 
 const cycleKey = ref('scoring');

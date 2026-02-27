@@ -17,38 +17,42 @@
       <input type="radio" value="opposing" v-model="fromLocation" /> Opposing
     </label>
   </div>
+
   <div class="form-group">
+    <h4>Fill Level</h4>
     <label>
-      <input type="radio" value="1" v-model="capacity" /> 0 - 1/3
+      <input type="radio" value="1" v-model="capacity" /> 1
     </label>
     <label>
-      <input type="radio" value="3" v-model="capacity" /> 1/3 - 2/3
+      <input type="radio" value="3" v-model="capacity" /> 3
     </label>
     <label>
-      <input type="radio" value="7" v-model="capacity" /> 2/3 - Full
+      <input type="radio" value="7" v-model="capacity" /> 7
     </label>
   </div>
-  <h3>Emptying</h3>
+  <h3>Shooting</h3>
   <div class="form-group">
+    <h4>Rate</h4>
     <label>
-      <input type="radio" value="1" v-model="speed" />pew
+      <input type="radio" value="1" v-model="speed" /> 1
     </label>
     <label>
-      <input type="radio" value="3" v-model="speed" /> pew-pew
+      <input type="radio" value="3" v-model="speed" /> 3
     </label>
     <label>
-      <input type="radio" value="7" v-model="speed" /> avalanche!
+      <input type="radio" value="7" v-model="speed" /> 7
     </label>
   </div>
    <div class="form-group">
+    <h4>Accuracy</h4>
     <label>
-      <input type="radio" value="1" v-model="accuracy" /> wild
+      <input type="radio" value="1" v-model="accuracy" /> 1
     </label>
     <label>
-      <input type="radio" value="3" v-model="accuracy" /> on target
+      <input type="radio" value="3" v-model="accuracy" /> 3
     </label>
     <label>
-      <input type="radio" value="7" v-model="accuracy" /> bullseye
+      <input type="radio" value="7" v-model="accuracy" /> 7
     </label>
   </div>
   <div class="form-group">

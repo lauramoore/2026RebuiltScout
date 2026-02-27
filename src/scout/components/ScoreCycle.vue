@@ -87,25 +87,3 @@ const speed = useVModel('speed');
 const accuracy = useVModel('accuracy');
 const mobileShotCapable = useVModel('mobileShotCapable');
 </script>
-
-<style scoped>
-.form-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  cursor: pointer;
-}
-
-.form-group-grid {
-  display: grid;
-  grid-template-columns: repeat(3, auto);
-  justify-content: start;
-}
-</style>

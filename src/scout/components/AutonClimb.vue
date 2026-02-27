@@ -65,19 +65,3 @@ const climbData = computed({
 
 const { climbLevel, climbStart, climbDismount} = useClimb(climbData);
 </script>
-
-<style scoped>
-.form-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  cursor: pointer;
-}
-</style>

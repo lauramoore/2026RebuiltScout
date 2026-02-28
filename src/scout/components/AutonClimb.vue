@@ -11,8 +11,8 @@
       <input type="radio" value="-1"  v-model="climbLevel" />Failed
     </label>
   </div>
+  <h4>Started</h4>
   <div class="form-group">
-    <h4>Started</h4>
      <label>
       <input type="radio" value="1" v-model="climbStart" /> 10
     </label>
@@ -26,8 +26,8 @@
       <input type="radio" value="3" v-model="climbStart" /> 25
     </label>
   </div>
+      <h4>Dismounted</h4>
     <div class="form-group">
-    <h4>Dismounted</h4>
      <label>
       <input type="radio" value="5" v-model="climbDismount" /> 5
     </label>
@@ -38,10 +38,10 @@
       <input type="radio" value="20" v-model="climbDismount" /> 20
     </label>
     <label>
-      <input type="radio" value="40" v-model="climbDismount" /> 40
+      <input type="radio" value="40" v-model="climbDismount" /> More
     </label>
         <label>
-      <input type="radio" value="120" v-model="climbDismount" /> stuck
+      <input type="radio" value="120" v-model="climbDismount" /> Never
     </label>
   </div>
 </template>

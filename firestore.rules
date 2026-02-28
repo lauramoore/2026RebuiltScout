@@ -14,6 +14,12 @@ service cloud.firestore {
     match /competitions/{competition}/schedule/{scheduleDoc} {
       allow read: if isWaltonRoboticsUser();
     }
+
+  
+    // Allow Walton Robotics users to read the competition schedule.
+    match /settings/{docId} {
+      allow read: if isWaltonRoboticsUser();
+    }
    
    //this rule ensures that each document can only be written by authorized user
     match /competitions/{competition}/matches/{matchId}/scouting/{docId} {

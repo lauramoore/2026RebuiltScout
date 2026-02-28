@@ -16,19 +16,16 @@ const routes = [
       path: '/',
       name: 'home',
       component: () => import('./views/HomeView.vue'),
-      meta: { requiresAuth: true }
     },
     {
       path: '/settings',
       name: 'settings',
       component: () => import('./views/SettingsView.vue'),
-      meta: { requiresAuth: true }
     },
     {
       path: '/summary/match/:event/:match',
       name: 'match-summary',
       component: () => import('./summary/MatchSummary.vue'),
-      meta: {requiresAuth: true }
     },
     ...scoutModule.scoutRoutes
 ]
@@ -38,27 +35,36 @@ export const router = createRouter({
   routes,
 })
 // The Navigation Guard
-router.beforeEach(async (to, from, next) => {
-  // Helper to wait for Firebase to initialize
-  const getCurrentUser = () => {
-    return new Promise((resolve, reject) => {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        unsubscribe();
-        resolve(user);
-      }, reject);
-    });
-  };
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!auth.currentUser;
 
-  const isAuthenticated = await getCurrentUser();
-
-  if (to.meta.requiresAuth && !isAuthenticated) {
+  // All routes except 'login' require authentication
+  if (to.name !== 'login' && !isAuthenticated) {
     next({ name: 'login' });
   } else if (to.name === 'login' && isAuthenticated) {
-    next({ name: 'home' }); // Don't let logged-in users go back to login page
+    // Don't let logged-in users go back to login page
+    next({ name: 'home' });
   } else {
     next();
   }
 });
 
-const app = createApp(App).use(router);
-app.mount('#app')
+let app;
+
+// Central authentication state change listener
+onAuthStateChanged(auth, (user) => {
+  // This callback is executed when the auth state changes, and also once on initial load.
+
+  // Mount the app only after the initial auth state is determined.
+  if (!app) {
+    app = createApp(App).use(router);
+    app.mount('#app');
+  }
+
+  // If the user is unauthenticated and they are not on the login page,
+  // redirect them to the login page. This handles the case where a user
+  // signs out from another tab or their session expires.
+  if (!user && router.currentRoute.value.name !== 'login') {
+    router.push({ name: 'login' });
+  }
+});

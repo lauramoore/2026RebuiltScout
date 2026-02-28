@@ -21,19 +21,28 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { db } from '../firebase'; // Adjust path based on your project structure
-import { collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 
 const events = ref([]);
+const eventId = ref('');
 
 onMounted(async () => {
   try {
-    const querySnapshot = await getDocs(collection(db, 'settings'));
-    events.value = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    const settingsDoc = await getDoc(doc(db, 'settings', 'current'));
+    if (settingsDoc.exists()) {
+      const eventsData = settingsDoc.data();
+      // Assuming the 'current' document's data is a map of event objects,
+      // where keys are event IDs. This mirrors how a collection query result
+      // (with doc.id and doc.data()) was being used before.
+      events.value = Object.keys(eventsData).map(key => ({
+        id: key,
+        ...eventsData[key]
+      }));
+    } else {
+      console.error("Firestore document 'settings/current' not found.");
+    }
   } catch (error) {
-    console.error("Error fetching events from firestore:", error);
+    console.error("Error fetching settings from firestore:", error);
   }
 });
 </script>

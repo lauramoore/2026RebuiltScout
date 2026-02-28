@@ -29,9 +29,8 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, computed, toRaw } from 'vue';
 import { useRoute, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router';
-import { db } from '../firebase.js';
+import { db, auth } from '../firebase.js';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Penalties from './components/Penalties.vue';
 
 // Components are now loaded by the router, so direct imports are no longer needed.
@@ -51,7 +50,6 @@ const userName = ref(null);
 
 let docRef = null;
 let unsubscribeDoc = null;
-let authUnsubscribe = null;
 
 // This computed property determines which part of the form is currently active
 // based on the route name.
@@ -81,20 +79,16 @@ const currentModel = computed({
 });
 
 onMounted(() => {
-  const auth = getAuth();
-  authUnsubscribe = onAuthStateChanged(auth, user => {
-    if (user) {
-      userId.value = user.uid;
-      userName.value = user.email;
-      setupFirestoreListener();
-    } else {
-      // This should not happen due to the route guard, but handle it just in case.
-      error.value = "You must be logged in to scout.";
-      userId.value = null;
-      userName.value = null;
-      if (unsubscribeDoc) unsubscribeDoc();
-    }
-  });
+  // The route guard in main.js ensures that auth.currentUser is available here.
+  const user = auth.currentUser;
+  if (user) {
+    userId.value = user.uid;
+    userName.value = user.email;
+    setupFirestoreListener();
+  } else {
+    // This case should not be reachable due to the route guard, but is a safe fallback.
+    error.value = "Authentication error: No user found.";
+  }
 });
 
 // Save data whenever the user navigates between scouting sections.
@@ -161,7 +155,6 @@ async function setupFirestoreListener() {
 }
 
 onUnmounted(() => {
-  if (authUnsubscribe) authUnsubscribe();
   if (unsubscribeDoc) unsubscribeDoc();
 });
 

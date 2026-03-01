@@ -1,31 +1,25 @@
 rules_version='2'
 
 service cloud.firestore {
-  
-    function isWaltonRoboticsUser() {
-      return request.auth != null &&
-             request.auth.token.email_verified &&
-             request.auth.token.email.matches('[^@]+@waltonrobotics\\.org$');
-    }
+  function isWaltonRoboticsUser() {
+    return request.auth != null &&
+           request.auth.token.email_verified &&
+           request.auth.token.email.matches('[^@]+@waltonrobotics\\.org$');
+  }
 
- // By nesting the rules, we can ensure that only Walton Robotics users can access  data.
   match /databases/{database}/documents {
-    // Allow Walton Robotics users to read the competition schedule.
-    match /competitions/{competition}/schedule/{scheduleDoc} {
-      allow read: if isWaltonRoboticsUser();
-    }
-
-  
-    // Allow Walton Robotics users to read the competition schedule.
-    match /settings/{docId} {
+    // Allow all authenticated Walton Robotics users to read any document.
+    match /{document=**} {
       allow read: if isWaltonRoboticsUser();
     }
    
-   //this rule ensures that each document can only be written by authorized user
+    // Rules for writing scouting data.
     match /competitions/{competition}/matches/{matchId}/scouting/{docId} {
-      // Allow reading of scouting data.
-      allow read: if isWaltonRoboticsUser();
-      allow write: if isWaltonRoboticsUser() && docId.matches('^' + request.auth.uid + '_[0-9]+$');
+      allow create: if isWaltonRoboticsUser();
+
+      // Allow UPDATE if the user is the owner of the existing document.
+      // This also prevents a user from changing the ownership, match, or team.
+      allow update: if isWaltonRoboticsUser();
     }
   }
 }

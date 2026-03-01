@@ -22,13 +22,17 @@
       <component :is="Component" v-model="currentModel" />
     </router-view>
 
-
+    <div class="save-container">
+      <button @click="saveScoutData" :disabled="isSaving" class="save-button">
+        {{ isSaving ? 'Saving...' : 'Manual Save' }}
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted, computed, toRaw } from 'vue';
-import { useRoute, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router';
+import { ref, reactive, onMounted, onUnmounted, computed, toRaw, watch } from 'vue';
+import { useRoute, onBeforeRouteLeave } from 'vue-router';
 import { db, auth } from '../firebase.js';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import Penalties from './components/Penalties.vue';
@@ -91,15 +95,27 @@ onMounted(() => {
   }
 });
 
-// Save data whenever the user navigates between scouting sections.
-onBeforeRouteUpdate(async () => {
-  // isSaving check in saveScoutData will prevent concurrent saves.
-  await saveScoutData();
+// Watch for changes in the current section (e.g., navigating from Auton to Teleop)
+// and trigger a save. This is a more explicit way to handle saving on sub-navigation
+// than using onBeforeRouteUpdate.
+watch(currentSection, (newSection, oldSection) => {
+  // We only want to save when leaving a section, not on the initial load.
+  if (oldSection) {
+    saveScoutData();
+  }
 });
 
 // Save data when the user navigates away from the scouting page entirely.
 onBeforeRouteLeave(async () => {
-  await saveScoutData();
+  const success = await saveScoutData();
+  if (!success) {
+    // If saving failed, ask the user if they really want to leave and lose changes.
+    const answer = window.confirm(
+      'Failed to save data. Are you sure you want to leave? Your recent changes might be lost.'
+    );
+    // If they click "Cancel", abort the navigation.
+    if (!answer) return false;
+  }
 });
 
 async function setupFirestoreListener() {
@@ -124,6 +140,7 @@ async function setupFirestoreListener() {
       const initialData = {
         team: teamNumber,
         match: matchNumber,
+        scout_uid: userId.value,
         scout: userName.value,
         lastUpdated: new Date(),
         auton: {
@@ -140,7 +157,6 @@ async function setupFirestoreListener() {
         const remoteData = docSnap.data() || {};
         formData.auton = remoteData.auton || {};
         formData.teleop = remoteData.teleop || {};
-        formData.endgame = remoteData.endgame || {};
         formData.observations = remoteData.observations || { categories: [], notes: '' };
         formData.penalties = remoteData.penalties || {};
       }
@@ -161,7 +177,7 @@ onUnmounted(() => {
 async function saveScoutData() {
   // Prevent concurrent saves if user clicks nav links quickly.
   if (isSaving.value) {
-    return;
+    return false;
   }
   if (!docRef) {
     error.value = "Cannot save, database connection not established.";
@@ -173,19 +189,21 @@ async function saveScoutData() {
   try {
     // Create a clean data object for Firestore.
     // toRaw() gets the plain object, and the JSON dance removes any 'undefined' values
-    // that Firestore would reject.
-    const dataToSave = JSON.parse(JSON.stringify(toRaw(formData)));
-    // Always update the timestamp and merge with the existing document.
-    await setDoc(docRef, {
-      ...dataToSave,
+    // that Firestore would reject. Add the lastUpdated timestamp before cleaning.
+    const dataToSave = {
+      ...toRaw(formData),
       lastUpdated: new Date()
-    }, { merge: true });
+    };
+    // Always update the timestamp and merge with the existing document.
+    await setDoc(docRef, JSON.parse(JSON.stringify(dataToSave)), { merge: true });
+    return true; // Indicate success
     // Navigate back to the schedule after saving.
     // \\
     // router.back();
   } catch (err) {
     console.error("Error saving scout data:", err);
     error.value = `Failed to save data: ${err.message}`;
+    return false; // Indicate failure
   } finally {
     isSaving.value = false;
   }
@@ -248,6 +266,28 @@ nextCycle {
 }
 addCyle {
   margin: 1em;
+}
+
+.save-container {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: center;
+}
+
+.save-button {
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.save-button:disabled {
+  background-color: #a9a9a9;
+  cursor: not-allowed;
 }
 
 /* Responsive Navigation for Mobile */

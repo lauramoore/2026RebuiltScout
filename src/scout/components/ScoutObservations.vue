@@ -1,31 +1,16 @@
 <template>
-  <h1>Observations</h1>
-  <h3>Categories</h3>
-  <div class="categories-container">
-      <label>
-      <input type="checkbox" value="trench" v-model="categories" />Uses Trench
-    </label>
-    <label>
-      <input type="checkbox" value="bump" v-model="categories" />Uses Bump
-    </label>
-    <label>
-      <input type="checkbox" value="2e2Shooter" v-model="categories" />End-To-End Passing
-    </label>
-    <label>
-      <input type="checkbox" value="bulldozer" v-model="categories" />Fuel Bulldozer
-    </label>
-     <label>
-      <input type="checkbox" value="didNotShow" v-model="categories" />Never Showed
-    </label>
-      <label>
-      <input type="checkbox" value="inTheWay" v-model="categories" />Blocked Partners
-    </label>
-    <label>
-      <input type="checkbox" value="broken" v-model="categories" />Broke During Match
-    </label>
+  <div>
+    <div class="form-group">
+      <label for="notes">Notes:</label>
+      <textarea id="notes" v-model="notes" rows="4" placeholder="General observations, robot capabilities, driver skill..."></textarea>
+    </div>
+
+    <div class="save-container">
+      <button @click="finishScouting" class="save-button">
+       Done
+      </button>
+    </div>
   </div>
-  <h3>Notes</h3>
-  <textarea v-model="notes"></textarea>
 </template>
 
 <script setup>
@@ -38,28 +23,43 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['update:modelValue']);
-
-const categories = computed({
-  get: () => props.modelValue.categories || [],
-  set: (value) => emit('update:modelValue', { ...props.modelValue, categories: value })
-});
+const emit = defineEmits(['update:modelValue', 'done']);
 
 const notes = computed({
-  get: () => props.modelValue.notes || '',
-  set: (value) => emit('update:modelValue', { ...props.modelValue, notes: value })
+  get: () => props.modelValue.notes,
+  set: (value) => {
+    emit('update:modelValue', { ...props.modelValue, notes: value });
+  }
 });
+
+function finishScouting() {
+  emit('done');
+}
 </script>
 
 <style scoped>
-.categories-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+.form-group {
+  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
+  margin-bottom: 1rem;
 }
-textarea {
-  height: 8rem;
-  width: 100%;
-  box-sizing: border-box;
+
+.save-container {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: center;
+}
+
+.save-button {
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  background-color: #28a745; /* Green for go/finish */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 </style>

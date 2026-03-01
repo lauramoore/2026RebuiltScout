@@ -19,20 +19,14 @@
       We use the v-slot API to pass the correct v-model to the rendered component.
     -->
     <router-view v-slot="{ Component }">
-      <component :is="Component" v-model="currentModel" />
+      <component :is="Component" v-model="currentModel" @done="finishAndSave" />
     </router-view>
-
-    <div class="save-container">
-      <button @click="saveScoutData" :disabled="isSaving" class="save-button">
-        {{ isSaving ? 'Saving...' : 'Manual Save' }}
-      </button>
-    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, computed, toRaw, watch } from 'vue';
-import { useRoute, onBeforeRouteLeave } from 'vue-router';
+import { useRoute, onBeforeRouteLeave, useRouter } from 'vue-router';
 import { db, auth } from '../firebase.js';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import Penalties from './components/Penalties.vue';
@@ -40,6 +34,7 @@ import Penalties from './components/Penalties.vue';
 // Components are now loaded by the router, so direct imports are no longer needed.
 
 const route = useRoute();
+const router = useRouter();
 
 const formData = reactive({
   auton: {},
@@ -174,6 +169,14 @@ onUnmounted(() => {
   if (unsubscribeDoc) unsubscribeDoc();
 });
 
+async function finishAndSave() {
+  const success = await saveScoutData();
+  if (success) {
+    router.push({ name: 'home' });
+  }
+  // If not successful, saveScoutData will set an error message for the user to see.
+}
+
 async function saveScoutData() {
   // Prevent concurrent saves if user clicks nav links quickly.
   if (isSaving.value) {
@@ -266,28 +269,6 @@ nextCycle {
 }
 addCyle {
   margin: 1em;
-}
-
-.save-container {
-  margin-top: 2rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
-  display: flex;
-  justify-content: center;
-}
-
-.save-button {
-  padding: 0.75rem 2rem;
-  font-size: 1.1rem;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.save-button:disabled {
-  background-color: #a9a9a9;
-  cursor: not-allowed;
 }
 
 /* Responsive Navigation for Mobile */

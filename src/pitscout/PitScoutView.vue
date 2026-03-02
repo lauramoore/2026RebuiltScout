@@ -9,7 +9,7 @@
         <legend>Robot Photo</legend>
         <div class="form-group">
           <label for="robot-photo">Capture or Upload Photo</label>
-          <input type="file" id="robot-photo" accept="image/*" @change="handleFileChange" required />
+          <input type="file" id="robot-photo" accept="image/*" @change="handleFileChange" />
         </div>
         <div v-if="photoPreview" class="photo-preview">
           <img :src="photoPreview" alt="Robot photo preview" />
@@ -103,10 +103,9 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { auth } from '../firebase';
-import { uploadRobotPhoto, uploadScoutData } from './pitScoutDataService.js';
+import { uploadRobotPhoto, uploadScoutData, loadExistingData, getFileUrl } from './pitScoutDataService.js';
 
 const route = useRoute();
 const router = useRouter();
@@ -136,6 +135,43 @@ const robotPhoto = ref(null);
 const photoPreview = ref(null);
 const isSubmitting = ref(false);
 const error = ref(null);
+const loadedData = ref(null); // To store the original loaded data
+
+onMounted(() => {
+  load();
+});
+
+async function load() {
+  try {
+    const data = await loadExistingData(teamNumber);
+    loadedData.value = data;
+
+    if (!data || Object.keys(data).length === 0) {
+      console.log(`No existing data for team ${teamNumber}. Starting fresh.`);
+      return;
+    }
+
+    // Populate the form with the loaded data.
+    for (const key in formData) {
+      if (data.hasOwnProperty(key)) {
+        formData[key] = data[key];
+      }
+    }
+
+    // Also load the photo preview from GCS via the service
+    if (data.photoGcsPath) {
+      try {
+        photoPreview.value = await getFileUrl(data.photoGcsPath);
+      } catch (urlError) {
+        console.error("Error getting photo download URL:", urlError);
+        error.value = "Failed to load existing robot photo preview.";
+      }
+    }
+  } catch (e) {
+      console.error('Error loading existing data:', e);
+      error.value = 'Failed to load existing data.';
+  }
+}
 
 function handleFileChange(event) {
   const file = event.target.files[0];
@@ -151,20 +187,33 @@ async function handleSubmit() {
     error.value = "Authentication error. Please sign in again.";
     return;
   }
+  // A photo is required, either existing or newly uploaded.
+  if (!robotPhoto.value && !photoPreview.value) {
+    error.value = "A robot photo is required.";
+    return;
+  }
+
   isSubmitting.value = true;
   error.value = null;
 
   try {
-    // 1. Upload photo and get its GCS path
-    const photoGcsPath = await uploadRobotPhoto(eventCode, teamNumber, robotPhoto.value);
+    // Start with existing photo data if it exists.
+    let photoGcsPath = loadedData.value?.photoGcsPath;
 
-    // 2. Prepare the final JSON data object
+    // 1. If a new photo was selected, upload it and get its new URL and path.
+    if (robotPhoto.value) {
+      const newPhotoGcsPath = await uploadRobotPhoto(eventCode, teamNumber, robotPhoto.value);
+      photoGcsPath = newPhotoGcsPath;
+
+    }
+
+    // 2. Prepare the final JSON data object with a public photo URL
     const scoutData = {
+      ...formData,
       teamNumber: teamNumber,
       scoutName: auth.currentUser.email,
       timestamp: new Date().toISOString(),
       photoGcsPath: photoGcsPath,
-      ...formData,
     };
 
     // 3. Upload the JSON data file to GCS

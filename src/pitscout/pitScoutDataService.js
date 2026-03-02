@@ -1,6 +1,6 @@
 import imageCompression from 'browser-image-compression';
-import { storage } from '../firebase.js';
-import { ref, getBlob, uploadBytes } from 'firebase/storage';
+import { storage} from '../firebase.js';
+import { ref, getBlob, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 /**
  * Fetches the pit scouting form template from GCS using the Firebase SDK.
@@ -48,6 +48,36 @@ export async function uploadRobotPhoto(eventCode, teamNumber, photoFile) {
   await uploadBytes(photoRef, compressedFile, metadata);
   // The fileName is the full path in the bucket, which is what we need.
   return fileName;
+}
+
+export async function loadExistingData(teamNumber) {
+  try {
+    // Data is stored in a standardized JSON file.
+    const dataPath =  `pitscout/data/${teamNumber}.json`;
+    const dataFileRef = ref(storage, dataPath);
+
+    const blob = await getBlob(dataFileRef);
+    const data = JSON.parse(await blob.text());
+    return data;
+  } catch (e) {
+    if (e.code === 'storage/object-not-found') {
+      console.log('No existing pit scout data found. Starting fresh.');
+      return {};
+    } else {
+      console.error('Error loading existing data:', e);
+      throw e;
+    }
+  }
+}
+
+/**
+ * Gets a public download URL for a file in Firebase Storage.
+ * @param {string} gcsPath - The full path to the file in the bucket.
+ * @returns {Promise<string>} The public download URL.
+ */
+export async function getFileUrl(gcsPath) {
+    const fileRef = ref(storage, gcsPath);
+    return await getDownloadURL(fileRef);
 }
 
 /**

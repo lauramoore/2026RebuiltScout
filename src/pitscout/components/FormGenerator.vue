@@ -1,12 +1,23 @@
 <template>
-  <div v-if="template && modelValue">
-    <div v-for="field in template.fields" :key="field.name" class="form-group">
+  <div v-if="template && modelValue" >
+    <div v-for="field in template.fields" :key="field.name" class="form-group form-group-grid">
       <label :for="field.name">{{ field.label }}</label>
 
       <input
-        v-if="field.type === 'text' || field.type === 'number'"
+        v-if="field.type === 'text'"
         :type="field.type"
         :id="field.name"
+        :value="modelValue[field.name]"
+        @input="updateValue(field.name, $event.target.value)"
+        :required="field.required"
+        :placeholder="field.placeholder || ''"
+      />
+
+       <input
+        v-else-if="field.type === 'number'"
+        :type="field.type"
+        :id="field.name"
+        :max="999"
         :value="modelValue[field.name]"
         @input="updateValue(field.name, $event.target.value)"
         :required="field.required"

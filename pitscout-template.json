@@ -9,20 +9,6 @@
       "placeholder": "e.g., 5"
     },
     {
-      "name": "autonomousStrategies",
-      "label": "Autonomous strategies",
-      "type": "textarea",
-      "required": false,
-      "placeholder": "Describe your autonomous routines..."
-    },
-    {
-      "name": "climbDetails",
-      "label": "Climb location, level, and time frame",
-      "type": "textarea",
-      "required": false,
-      "placeholder": "e.g., Center, Level 3, in 15 seconds"
-    },
-    {
       "name": "intakeTime",
       "label": "Intake time (seconds)",
       "type": "number",
@@ -37,13 +23,13 @@
       "placeholder": "e.g., 3"
     },
     {
-      "name": "driveTeamExperience",
-      "label": "Drive team years/rating",
-      "type": "text",
+      "name": "autonomousStrategies",
+      "label": "Autonomous strategies",
+      "type": "textarea",
       "required": false,
-      "placeholder": "e.g., 3 years, experienced"
+      "placeholder": "Describe your autonomous routines..."
     },
-    {
+      {
       "name": "shooterType",
       "label": "Shooter Type",
       "type": "select",
@@ -62,6 +48,22 @@
       "required": false,
       "placeholder": "e.g., at hub base"
     },
+    {
+      "name": "climbDetails",
+      "label": "Climb location, level, and time frame",
+      "type": "textarea",
+      "required": false,
+      "placeholder": "e.g., Center, Level 3, in 15 seconds"
+    },
+  
+    {
+      "name": "driveTeamExperience",
+      "label": "Drive team years/rating",
+      "type": "text",
+      "required": false,
+      "placeholder": "e.g., 3 years, experienced"
+    },
+  
     {
       "name": "inactiveStyle",
       "label": "Describe your playstyle or  strategy during the inactive periods?",

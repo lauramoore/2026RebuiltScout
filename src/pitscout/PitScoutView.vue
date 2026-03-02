@@ -10,23 +10,23 @@
         <legend>Hopper Dimensions</legend>
         <div class="form-group form-group-grid">
           <label for="height">Height (in):</label>
-          <input type="number" id="height" v-model.number="formData.height" required step="0.1" />
+          <input type="number" id="height" max="999" v-model.number="formData.height" required step="0.1" />
 
           <label for="width">Width (in):</label>
-          <input type="number" id="width" v-model.number="formData.width" required step="0.1" />
+          <input type="number" id="width"  max="999" v-model.number="formData.width" required step="0.1" />
 
           <label for="length">Length (in):</label>
-          <input type="number" id="length" v-model.number="formData.length" required step="0.1" />
+          <input type="number" id="length"  max="999" v-model.number="formData.length" required step="0.1" />
 
           <label for="description">Hopper Description</label>
-          <textarea id="description" v-model="formData.hopperDescription" placeholder="e.g., The turret intake takes up about half the hopper capacity"></textarea>
+          <textarea id="description" v-model="formData.hopperNotes" placeholder="e.g., The turret intake takes up about half the hopper capacity"></textarea>
         </div>
       </fieldset>
       <fieldset>
         <legend>Robot Weight</legend>
         <div class="form-group form-group-grid">
           <label for="weight">Weight (lbs):</label>
-          <input type="number" id="weight" v-model.number="formData.weight" required step="0.1" />
+          <input type="number" id="weight"  max="999" v-model.number="formData.weight" required step="0.1" />
         </div>
       </fieldset>
 
@@ -71,9 +71,10 @@ const eventCode = route.params.event;
 const formTemplate = ref(null);
 const formData = reactive({
   height: null,
-  weight: null,
+  width: null,
   length: null,
-  description: '',
+  weight: null,
+  hopperNotes: '',
   dynamic: {},
 });
 const robotPhoto = ref(null);
@@ -145,10 +146,9 @@ async function handleSubmit() {
 }
 </script>
 
-<style scoped>
+<style>
 .pitscout-view-container {
   padding: 1rem;
-  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -156,6 +156,20 @@ form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group-grid {
+  display: grid;
+  /* Lays out label and input in two columns */
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 1rem;
 }
 
 fieldset {
@@ -167,7 +181,12 @@ fieldset {
 legend {
   padding: 0 0.5rem;
   font-weight: bold;
-  color: #2c3e50;
+  color: #a1bedb;
+}
+
+/* Set a specific width for number inputs to fit about 3 digits */
+form input[type="number"] {
+  width: 8ch;
 }
 
 .photo-preview img {

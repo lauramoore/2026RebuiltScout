@@ -1,10 +1,9 @@
 <template>
   <div class="pitscout-view-container">
     <h1>Pit Scout: Team {{ teamNumber }}</h1>
-    <div v-if="loadingTemplate" class="loading">Loading form...</div>
     <div v-if="error" class="error-message">{{ error }}</div>
 
-    <form v-if="formTemplate" @submit.prevent="handleSubmit">
+    <form @submit.prevent="handleSubmit">
       <!-- Core Data Points -->
       <fieldset>
         <legend>Hopper Dimensions</legend>
@@ -31,10 +30,58 @@
         </div>
       </fieldset>
 
-      <!-- Dynamic Fields from Template -->
+      <!-- Hardcoded fields from template -->
       <fieldset>
         <legend>Robot Details</legend>
-        <FormGenerator :template="formTemplate" v-model="formData.dynamic" />
+        <div class="form-group">
+          <label for="fuelCapacity">What is your fuel capacity?</label>
+          <input type="number" id="fuelCapacity" v-model.number="formData.fuelCapacity" required placeholder="e.g., 5" />
+        </div>
+        <div class="form-group">
+          <label for="intakeTime">Intake time (seconds)</label>
+          <input type="number" id="intakeTime" v-model.number="formData.intakeTime" placeholder="e.g., 2.5" step="0.1" />
+        </div>
+        <div class="form-group">
+          <label for="shootingRate">Shooting/output rate (fuel per second)</label>
+          <input type="number" id="shootingRate" v-model.number="formData.shootingRate" placeholder="e.g., 3" step="0.1" />
+        </div>
+        <div class="form-group">
+          <label for="autonomousStrategies">Autonomous strategies</label>
+          <textarea id="autonomousStrategies" v-model="formData.autonomousStrategies" placeholder="Describe your autonomous routines..."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="shooterType">Shooter Type</label>
+          <select id="shooterType" v-model="formData.shooterType" required>
+            <option :value="null" disabled>Please select one</option>
+            <option>Fixed Shooter</option>
+            <option>Hooded Shooter</option>
+            <option>Turret</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="shootingLocation">If fixed/no turret: shooting location?</label>
+          <input type="text" id="shootingLocation" v-model="formData.shootingLocation" placeholder="e.g., at hub base" />
+        </div>
+        <div class="form-group">
+          <label for="climbDetails">Climb location, level, and time frame</label>
+          <textarea id="climbDetails" v-model="formData.climbDetails" placeholder="e.g., Center, Level 3, in 15 seconds"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="driveTeamExperience">Drive team years/rating</label>
+          <input type="text" id="driveTeamExperience" v-model="formData.driveTeamExperience" placeholder="e.g., 3 years, experienced" />
+        </div>
+        <div class="form-group">
+          <label for="inactiveStyle">Describe your playstyle or strategy during the inactive periods?</label>
+          <textarea id="inactiveStyle" v-model="formData.inactiveStyle" placeholder="e.g., We focus collecting in neutral zone and shooting into home zone"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="activeStyle">Describe your playstyle or strategy during the active periods?</label>
+          <textarea id="activeStyle" v-model="formData.activeStyle" placeholder="e.g. We attempt to score 2 hoppers full collecting from the home zone"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="notes">Additional Notes</label>
+          <textarea id="notes" v-model="formData.notes" placeholder="Any other important details..."></textarea>
+        </div>
       </fieldset>
 
       <!-- Media Handling -->
@@ -57,11 +104,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { auth } from '../firebase';
-import FormGenerator from './components/FormGenerator.vue';
-import { getFormTemplate, uploadRobotPhoto, uploadScoutData } from './pitScoutDataService.js';
+import { uploadRobotPhoto, uploadScoutData } from './pitScoutDataService.js';
 
 const route = useRoute();
 const router = useRouter();
@@ -69,38 +115,28 @@ const router = useRouter();
 const teamNumber = route.params.team;
 const eventCode = route.params.event;
 
-const formTemplate = ref(null);
 const formData = reactive({
   height: null,
   width: null,
   length: null,
   weight: null,
   hopperNotes: '',
-  dynamic: {},
+  fuelCapacity: null,
+  intakeTime: null,
+  shootingRate: null,
+  autonomousStrategies: '',
+  shooterType: null,
+  shootingLocation: '',
+  climbDetails: '',
+  driveTeamExperience: '',
+  inactiveStyle: '',
+  activeStyle: '',
+  notes: '',
 });
 const robotPhoto = ref(null);
 const photoPreview = ref(null);
 const isSubmitting = ref(false);
-const loadingTemplate = ref(true);
 const error = ref(null);
-
-onMounted(async () => {
-  try {
-    const template = await getFormTemplate();
-
-    // Initialize dynamic form data with null values to ensure reactivity
-    template.fields.forEach(field => {
-      formData.dynamic[field.name] = field.defaultValue !== undefined ? field.defaultValue : null;
-    });
-    formTemplate.value = template;
-
-  } catch (e) {
-    error.value = e.message;
-    console.error(e);
-  } finally {
-    loadingTemplate.value = false;
-  }
-});
 
 function handleFileChange(event) {
   const file = event.target.files[0];
@@ -193,12 +229,6 @@ legend {
   color: #a1bedb;
 }
 
-/* Target the container div inside FormGenerator to space out its fields */
-fieldset > div:only-child {
-  display: flex;
-  flex-direction: column;
-}
-
 /* Set a specific width for number inputs to fit about 3 digits */
 form input[type="number"] {
   width: 40%;
@@ -216,5 +246,12 @@ form input[type="number"] {
 .error-message {
   color: red;
   margin-bottom: 1rem;
+}
+
+select, textarea, input {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
 }
 </style>

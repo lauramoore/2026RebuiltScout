@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "scout_uid": { "type": "string" },
+    "match": { "type": "string" },
+    "team": { "type": "string" },
+    "scout": { "type": "string", "format": "email" },
+    "auton": {
+      "type": "object",
+      "properties": {
+        "preload": { "type": "object" },
+        "scoring": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fromLocation": { "type": "string" },
+              "capacity": { "type": "integer" },
+              "speed": { "type": "integer" },
+              "accuracy": { "type": "integer" }
+            },
+            "required": ["fromLocation", "capacity", "speed"]
+          }
+        },
+        "startAt": { "type": "string" },
+        "climb": {
+          "type": "object",
+          "properties": {
+            "level": { "type": "integer" },
+            "start": { "type": "integer" },
+            "dismount": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "penalties": {
+      "type": "object",
+      "properties": {
+        "fouls": { "type": "integer" },
+        "penalties": { "type": "integer" }
+      }
+    },
+    "teleop": {
+      "type": "object",
+      "properties": {
+        "climb": {
+          "type": "object",
+          "properties": {
+            "level": { "type": "integer" },
+            "start": { "type": "integer" }
+          }
+        },
+        "scoring": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fromLocation": { "type": "string" },
+              "capacity": { "type": "integer" },
+              "speed": { "type": "integer" },
+              "accuracy": { "type": "integer" }
+            }
+          }
+        },
+        "defense": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "defenseLocation": { "type": "string" },
+              "effective": { "type": "integer" }
+            }
+          }
+        },
+        "passing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fromLocation": { "type": "string" },
+              "toLocation": { "type": "string" },
+              "capacity": { "type": "integer" },
+              "speed": { "type": "integer" },
+              "accuracy": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+    "observations": {
+      "type": "object",
+      "properties": {
+        "notes": { "type": "string" },
+        "categories": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "lastUpdated": { "type": "string", "format": "date-time" }
+  },
+  "required": [
+    "scout_uid",
+    "match",
+    "team",
+    "scout",
+    "observations",
+    "lastUpdated"
+  ]
+}

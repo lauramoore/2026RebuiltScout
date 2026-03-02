@@ -13,7 +13,7 @@
         <IconHome />
         Home
       </router-link>
-       <router-link class="nav-button" :to="route.params.event ? { name: 'pitscout', params: { event: route.params.event } } : '/pitscout'">
+       <router-link class="nav-button" :to="route.params.event ? { name: 'pitscout-home', params: { event: route.params.event } } : '/pitscout'">
         <IconEcosystem />
           Pit Scout
       </router-link>
@@ -37,11 +37,11 @@ header {
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
-  border: 1px solid #42b983;
+  border: 1px solid #08794d;
   border-radius: 4px;
   text-decoration: none;
   color: white;
-  background-color: #42b983;
+  background-color: #08794d;
 }
 
 .home-button:hover {

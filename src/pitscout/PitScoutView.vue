@@ -4,6 +4,17 @@
     <div v-if="error" class="error-message">{{ error }}</div>
 
     <form @submit.prevent="handleSubmit">
+         <!-- Media Handling -->
+      <fieldset>
+        <legend>Robot Photo</legend>
+        <div class="form-group">
+          <label for="robot-photo">Capture or Upload Photo</label>
+          <input type="file" id="robot-photo" accept="image/*" @change="handleFileChange" required />
+        </div>
+        <div v-if="photoPreview" class="photo-preview">
+          <img :src="photoPreview" alt="Robot photo preview" />
+        </div>
+      </fieldset>
       <!-- Core Data Points -->
       <fieldset>
         <legend>Hopper Dimensions</legend>
@@ -84,20 +95,8 @@
         </div>
       </fieldset>
 
-      <!-- Media Handling -->
-      <fieldset>
-        <legend>Robot Photo</legend>
-        <div class="form-group">
-          <label for="robot-photo">Capture or Upload Photo</label>
-          <input type="file" id="robot-photo" accept="image/*" @change="handleFileChange" required />
-        </div>
-        <div v-if="photoPreview" class="photo-preview">
-          <img :src="photoPreview" alt="Robot photo preview" />
-        </div>
-      </fieldset>
-
       <button type="submit" :disabled="isSubmitting" class="btn-primary">
-        {{ isSubmitting ? 'Submitting...' : 'Submit Scout Data' }}
+        {{ isSubmitting ? 'Saving...' : 'Done' }}
       </button>
     </form>
   </div>
@@ -226,7 +225,7 @@ fieldset {
 legend {
   padding: 0 0.5rem;
   font-weight: bold;
-  color: #a1bedb;
+  color: #08794d;
 }
 
 /* Set a specific width for number inputs to fit about 3 digits */

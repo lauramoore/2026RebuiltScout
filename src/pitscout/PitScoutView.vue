@@ -17,8 +17,9 @@
 
           <label for="length">Length (in):</label>
           <input type="number" id="length"  max="999" v-model.number="formData.length" required step="0.1" />
-
-          <label for="description">Hopper Description</label>
+        </div>
+        <div class="form-group">
+           <label for="description">Hopper Description</label>
           <textarea id="description" v-model="formData.hopperNotes" placeholder="e.g., The turret intake takes up about half the hopper capacity"></textarea>
         </div>
       </fieldset>
@@ -161,7 +162,9 @@ form {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+
 }
 
 .form-group-grid {
@@ -169,13 +172,19 @@ form {
   /* Lays out label and input in two columns */
   grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 1rem;
+  /* More space between rows, less between label and input */
+  row-gap: 1.5rem;
+  column-gap: 0.75rem;
 }
 
 fieldset {
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 1rem;
+  /* Add spacing between groups of controls within a fieldset */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 legend {
@@ -184,9 +193,15 @@ legend {
   color: #a1bedb;
 }
 
+/* Target the container div inside FormGenerator to space out its fields */
+fieldset > div:only-child {
+  display: flex;
+  flex-direction: column;
+}
+
 /* Set a specific width for number inputs to fit about 3 digits */
 form input[type="number"] {
-  width: 8ch;
+  width: 40%;
 }
 
 .photo-preview img {

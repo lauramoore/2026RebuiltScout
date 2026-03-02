@@ -1,6 +1,6 @@
 <template>
   <div v-if="template && modelValue" >
-    <div v-for="field in template.fields" :key="field.name" class="form-group form-group-grid">
+    <div v-for="field in template.fields" :key="field.name" class="form-group">
       <label :for="field.name">{{ field.label }}</label>
 
       <input

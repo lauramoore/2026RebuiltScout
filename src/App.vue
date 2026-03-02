@@ -1,17 +1,21 @@
 <script setup>
   import { RouterView } from 'vue-router';
   import { useRoute } from 'vue-router';
+  import IconEcosystem from './components/icons/IconEcosystem.vue';
+  import IconHome from './components/icons/IconHome.vue';
 
   const route = useRoute();
 </script>
 
 <template>
   <header>
-     <router-link class="home-button" :to="route.params.event ? { name: 'home', params: { event: route.params.event } } : '/'">
-        <svg class="home-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
-        </svg>
+     <router-link class="nav-button" :to="route.params.event ? { name: 'home', params: { event: route.params.event } } : '/'">
+        <IconHome />
         Home
+      </router-link>
+       <router-link class="nav-button" :to="route.params.event ? { name: 'pitscout', params: { event: route.params.event } } : '/pitscout'">
+        <IconEcosystem />
+          Pit Scout
       </router-link>
   </header>
   <RouterView />
@@ -19,7 +23,8 @@
 <style>
 header {
   line-height: 1.5;
-  max-height: 100vh;
+  display: flex;
+  gap: 1rem;
 }
 
 .logo {
@@ -27,37 +32,11 @@ header {
   margin: 0 auto 2rem;
 }
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-.home-button {
+.nav-button {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
-  padding: 0.5rem 1rem;
   border: 1px solid #42b983;
   border-radius: 4px;
   text-decoration: none;
@@ -91,16 +70,6 @@ nav a:first-of-type {
     display: flex;
     place-items: flex-start;
     flex-wrap: wrap;
-  }
-
-  nav {
-    width: auto;
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
   }
 }
 </style>

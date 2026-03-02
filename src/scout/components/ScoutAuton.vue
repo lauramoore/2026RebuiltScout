@@ -36,7 +36,7 @@ import AutonClimb from './AutonClimb.vue'
 const props = defineProps({
   modelValue: Object
 });
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', "done"]);
 
 const model = computed({
   get: () => props.modelValue || {},

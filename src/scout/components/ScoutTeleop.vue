@@ -19,7 +19,7 @@
   <router-view v-slot="{ Component }">
     <component :is="Component" v-model="currentCycleModel" />
   </router-view>
-  
+
   <EndgameClimb v-model="climb" />
 </template>
 <script setup>
@@ -33,7 +33,7 @@ const props = defineProps({
   modelValue: Object
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', "done"]);
 const route = useRoute();
 const model = computed({
   get: () => props.modelValue || {},

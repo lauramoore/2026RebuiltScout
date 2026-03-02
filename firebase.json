@@ -32,14 +32,13 @@
     ],
     "rewrites": [
       {
-        "source": "/api/getEventSchedule/**",
-        "function": "events-getEventSchedule"
-      },
-      {
         "source": "**",
         "destination": "/index.html"
       }
     ]
+  },
+  "storage": {
+    "rules": "storage.rules"
   },
   "emulators": {
     "apphosting": {
@@ -58,6 +57,9 @@
     },
     "hosting": {
       "port": 5000
+    },
+    "storage": {
+      "port": 9199
     },
     "ui": {
       "enabled": true

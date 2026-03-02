@@ -23,6 +23,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "browser-image-compression": "^2.0.2",
     "firebase": "^12.7.0",
     "vue": "^3.5.18",
     "vue-router": "^4.4.0"

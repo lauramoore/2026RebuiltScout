@@ -5,6 +5,7 @@ import App from './App.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import { auth, onAuthStateChanged } from './firebase'
 import scoutModule from './scout/scout'
+import pitScoutModule from './pitscout/pitscout'
 
 const routes = [
     {
@@ -27,7 +28,8 @@ const routes = [
       name: 'match-summary',
       component: () => import('./summary/MatchSummary.vue'),
     },
-    ...scoutModule.scoutRoutes
+    ...scoutModule.scoutRoutes,
+    ...pitScoutModule.routes
 ]
 
 export const router = createRouter({

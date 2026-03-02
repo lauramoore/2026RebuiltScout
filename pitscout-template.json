@@ -1,0 +1,87 @@
+{
+  "version": "1.0.0",
+  "fields": [
+    {
+      "name": "fuelCapacity",
+      "label": "What is your fuel capacity?",
+      "type": "number",
+      "required": true,
+      "placeholder": "e.g., 5"
+    },
+    {
+      "name": "autonomousStrategies",
+      "label": "Autonomous strategies",
+      "type": "textarea",
+      "required": false,
+      "placeholder": "Describe your autonomous routines..."
+    },
+    {
+      "name": "climbDetails",
+      "label": "Climb location, level, and time frame",
+      "type": "textarea",
+      "required": false,
+      "placeholder": "e.g., Center, Level 3, in 15 seconds"
+    },
+    {
+      "name": "intakeTime",
+      "label": "Intake time (seconds)",
+      "type": "number",
+      "required": false,
+      "placeholder": "e.g., 2.5"
+    },
+    {
+      "name": "shootingRate",
+      "label": "Shooting/output rate (fuel per second)",
+      "type": "number",
+      "required": false,
+      "placeholder": "e.g., 3"
+    },
+    {
+      "name": "driveTeamExperience",
+      "label": "Drive team years/rating",
+      "type": "text",
+      "required": false,
+      "placeholder": "e.g., 3 years, experienced"
+    },
+    {
+      "name": "shooterType",
+      "label": "Shooter Type",
+      "type": "select",
+      "required": true,
+      "options": [
+        "Fixed Shooter",
+        "Hooded Shooter",
+        "Turret"
+      ],
+      "defaultValue": null
+    },
+    {
+      "name": "shootingLocation",
+      "label": "If fixed/no turret: shooting location?",
+      "type": "text",
+      "required": false,
+      "placeholder": "e.g., at hub base"
+    },
+    {
+      "name": "inactiveStyle",
+      "label": "Describe your playstyle or  strategy during the inactive periods?",
+      "type": "textarea",
+      "required": false,
+      "placeholder": "e.g., We focus collecting in neutral zone and shooting into home zone"
+    },
+    {
+      "name": "activeStyle",
+      "label": "Describe your playstyle or  strategy during the active periods?",
+      "type": "textarea",
+      "required": false,
+      "placeholder": "e.g. We attempt to score 2 hoppers full collecting from the home zone"
+    },
+    {
+      "name": "notes",
+      "label": "Additional Notes",
+      "type": "textarea",
+      "required": false,
+      "placeholder": "Any other important details..."
+    }
+  ]
+}

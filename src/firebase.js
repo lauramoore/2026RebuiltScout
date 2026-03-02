@@ -3,6 +3,7 @@ import { getAuth, GoogleAuthProvider, onAuthStateChanged, connectAuthEmulator } 
 import { connectFirestoreEmulator, initializeFirestore, persistentLocalCache, getFirestore} from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+import { getStorage, connectStorageEmulator } from 'firebase/storage';
 import { getAnalytics } from "firebase/analytics";
 
 
@@ -26,6 +27,7 @@ const db = setupFirestore(firebaseApp);
 
 const auth = getAuth(firebaseApp);
 const functions = getFunctions(firebaseApp);
+const storage = getStorage(firebaseApp);
 
 
 const authProvider = new GoogleAuthProvider();
@@ -36,7 +38,8 @@ authProvider.setCustomParameters({
 if (window.location.hostname === 'localhost') {
   connectAuthEmulator(auth, 'http://localhost:9099');
   connectFunctionsEmulator(functions, 'localhost', 5001);
-  connectFirestoreEmulator(db, 'localhost', 8080 )
+  connectFirestoreEmulator(db, 'localhost', 8080 );
+  connectStorageEmulator(storage, 'localhost', 9199);
   self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
 }
 
@@ -76,6 +79,7 @@ export {
   auth,
   functions,
   db,
+  storage,
   authProvider,
   onAuthStateChanged,
   GoogleAuthProvider

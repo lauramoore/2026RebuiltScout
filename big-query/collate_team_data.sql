@@ -65,7 +65,7 @@ USING (
       t.timestamp AS last_updated
     FROM `wrt-firebase-web-app.wrtScoutingApp.match_scouting_raw_latest` AS t
     -- Filter raw source to only look at recent data for performance
-    WHERE t.timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 7 DAY)
+    WHERE TIMESTAMP(JSON_VALUE(t.data, '$.lastUpdated')) >= TIMESTAMP(CURRENT_DATE())
   )
   QUALIFY ROW_NUMBER() OVER (
     PARTITION BY event_key, match_key, team_number, scout_email

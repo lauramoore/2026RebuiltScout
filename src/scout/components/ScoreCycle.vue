@@ -21,13 +21,13 @@
   <div class="form-group">
     <h4>Fill Level</h4>
     <label>
-      <input type="radio" value="1" v-model="capacity" /> 1
+      <input type="radio" value="1" v-model="capacity" /> &lt;30
     </label>
     <label>
-      <input type="radio" value="3" v-model="capacity" /> 3
+      <input type="radio" value="3" v-model="capacity" /> 30 - 75
     </label>
     <label>
-      <input type="radio" value="7" v-model="capacity" /> 7
+      <input type="radio" value="7" v-model="capacity" /> 80%+
     </label>
   </div>
   <h3>Shooting</h3>
@@ -46,13 +46,13 @@
    <div class="form-group">
     <h4>Accuracy</h4>
     <label>
-      <input type="radio" value="1" v-model="accuracy" /> 1
+      <input type="radio" value="1" v-model="accuracy" /> &lt;50%
     </label>
     <label>
-      <input type="radio" value="3" v-model="accuracy" /> 3
+      <input type="radio" value="3" v-model="accuracy" /> 50%-75%
     </label>
     <label>
-      <input type="radio" value="7" v-model="accuracy" /> 7
+      <input type="radio" value="7" v-model="accuracy" /> 80%+
     </label>
   </div>
   <div class="form-group">

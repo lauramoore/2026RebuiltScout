@@ -5,13 +5,13 @@
 
     <div class="form-group">
       <label>
-        <input type="radio" value="0" v-model="startAt" /> Depot
+        <input type="radio" value="Depot" v-model="startAt" /> Depot
       </label>
       <label>
-        <input type="radio" value="2" v-model="startAt" /> Hub
+        <input type="radio" value="Hub" v-model="startAt" /> Hub
       </label>
       <label>
-        <input type="radio" value="4" v-model="startAt" /> Outpost
+        <input type="radio" value="Outpost" v-model="startAt" /> Outpost
       </label>
     </div>
   </div>

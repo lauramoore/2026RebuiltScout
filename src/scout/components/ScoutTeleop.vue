@@ -82,7 +82,19 @@ const isEditing = ref(false);
 function changeCycleType(newType) {
   if (newType === currentCycleType.value || !cycles.value.length || !currentCycleType.value) return;
 
-  const cycleToMove = { ...currentCycleModel.value };
+  // If moving to or from a defense cycle, start with a fresh, empty cycle.
+  // Otherwise, copy the existing cycle data.
+  const cycleToMove = (currentCycleType.value === 'defense' || newType === 'defense')
+    ? {}
+    : { ...currentCycleModel.value };
+
+  // When converting from passing to scoring, remove passing-specific properties.
+  if (currentCycleType.value === 'passing' && newType === 'scoring') {
+    delete cycleToMove.toLocation;
+    delete cycleToMove.bulldozer;
+  } else if(currentCycleType.value === 'scoring' && newType === 'passing') {
+    delete cycleToMove.fromLocation;
+  }
 
   // Remove from the old cycle type's array
   let oldTypedCycles = (model.value[currentCycleType.value] || []).filter((_, i) => i !== currentIndex.value);

@@ -17,8 +17,8 @@
       <input type="radio" value="neutral" v-model="toLocation" /> Neutral
     </label>
   </div>
+   <h3>Capacity</h3>
    <div class="form-group">
-    <h3>Capacity</h3>
     <label>
       <input type="radio" value="1" v-model="capacity" /> &lt;30%
     </label>
@@ -29,8 +29,8 @@
       <input type="radio" value="7" v-model="capacity" /> 80%+
     </label>
   </div>
+  <h3>Rate</h3>
   <div class="form-group">
-     <h3>Rate</h3>
     <label>
       <input type="radio" value="1" v-model="speed" />1
     </label>
@@ -41,8 +41,8 @@
       <input type="radio" value="7" v-model="speed" /> 7
     </label>
   </div>
-   <div class="form-group">
     <h3>Accuracy</h3>
+   <div class="form-group">
     <label>
       <input type="radio" value="1" v-model="accuracy" /> &lt;50%
     </label>
@@ -57,7 +57,7 @@
     <label>
       <input type="checkbox" value="true" v-model="mobileShotCapable" /> Shot on the Move
     </label>
-    <label>
+     <label>
       <input type="checkbox" value="true" v-model="bulldozer" /> Bulldozer
     </label>
   </div>

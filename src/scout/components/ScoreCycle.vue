@@ -43,8 +43,8 @@
       <input type="radio" value="7" v-model="speed" /> 7
     </label>
   </div>
+   <h4>Accuracy</h4>
    <div class="form-group">
-    <h4>Accuracy</h4>
     <label>
       <input type="radio" value="1" v-model="accuracy" /> &lt;50%
     </label>

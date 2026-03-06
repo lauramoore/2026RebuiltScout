@@ -2,16 +2,14 @@
   <div class="settings">
     <h1>Settings</h1>
     <div class="setting-group">
-      <label for="event-select">Current Event ID</label>
-      <select id="event-select" v-model="eventId">
-        <option disabled value="">Select an event</option>
-        <option v-for="event in events" :key="event.id" :value="event.id">
-          {{ event.name || event.id }}
-        </option>
-      </select>
-      <p class="description">
-        Select the event you are currently scouting. This will be used as the default for new scout entries.
-      </p>
+      <label for="event-select">Event ID</label>
+      <input id="event-select" v-model="eventId" />
+       <label for="season-select">Season</label>
+      <input id="season-select"  v-model="season" />
+    </div>
+
+    <div>
+      <button @click="scheduleUpdate">Update Schedule</button>
     </div>
 
 
@@ -20,30 +18,49 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { db } from '../firebase'; // Adjust path based on your project structure
-import { doc, getDoc } from 'firebase/firestore';
+import { functions } from '../firebase.js'
+import { httpsCallable } from 'firebase/functions';
 
-const events = ref([]);
-const eventId = ref('');
+const eventId = ref('gadal');
+const season = ref('2026');
 
-onMounted(async () => {
+async function scheduleUpdate() {
+  const callImportFrcSchedule = httpsCallable(functions, 'importFrcSchedule');
+
+  if (!eventId.value) {
+    alert('Please select an event first.');
+    return;
+  }
+
+
+  const scheduleQuery = {
+    year: String(season.value),
+    eventCode: eventId.value,
+    tournamentLevel: "Qualification" // TODO: This could be a dropdown in the UI
+  };
+
+  console.log(`Calling importFrcSchedule with:`, scheduleQuery);
+  alert('Updating schedule... This may take a moment.');
+
   try {
-    const settingsDoc = await getDoc(doc(db, 'settings', 'current'));
-    if (settingsDoc.exists()) {
-      const eventsData = settingsDoc.data();
-      // Assuming the 'current' document's data is a map of event objects,
-      // where keys are event IDs. This mirrors how a collection query result
-      // (with doc.id and doc.data()) was being used before.
-      events.value = Object.keys(eventsData).map(key => ({
-        id: key,
-        ...eventsData[key]
-      }));
+    const result = await callImportFrcSchedule(scheduleQuery);
+    const data = result.data;
+
+    if (data.success) {
+      console.log(`Successfully imported schedule: ${data.message}`);
+      alert(`Schedule updated! ${data.matchesSaved} matches saved.`);
     } else {
-      console.error("Firestore document 'settings/current' not found.");
+      console.warn(`Function reported an issue: ${data.message}`);
+      alert(`Could not update schedule: ${data.message}`);
     }
   } catch (error) {
-    console.error("Error fetching settings from firestore:", error);
+    console.error(`Error calling function: ${error.code} - ${error.message}`);
+    alert(`An error occurred while updating the schedule: ${error.message}`);
   }
+}
+
+onMounted(async () => {
+
 });
 </script>
 

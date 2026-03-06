@@ -127,27 +127,13 @@ async function setupFirestoreListener() {
       docRef = doc(db, 'competitions', eventCode,
                             'matches', matchNumber,
                             'scouting', scoutRef  );
-      // Create document for each scouter_team so that different users can't overwrite each other
-      //and will not have any document contention during scouting
-      // We initialize the document with a full, empty structure.
-      // Using { merge: true } prevents us from overwriting existing data if the user reloads the page.
-      // This also helps satisfy security rules that might require certain fields to exist.
-      const initialData = {
-        team: teamNumber,
-        match: matchNumber,
-        scout_uid: userId.value,
-        scout: userName.value,
-        lastUpdated: new Date(),
-        auton: {
-          preload: {},
-        },
-        teleop: {},
-        observations: { categories: [], notes: '' },
-        penalties:{}
-      };
-      await setDoc(docRef, initialData, { merge: true });
 
     unsubscribeDoc = onSnapshot(docRef, (docSnap) => {
+      // Ignore local changes to avoid overwriting form data while the user is typing.
+      if (docSnap.metadata.hasPendingWrites) {
+        return;
+      }
+
       if (docSnap.exists()) {
         const remoteData = docSnap.data() || {};
         formData.auton = remoteData.auton || {};
@@ -184,21 +170,23 @@ async function saveScoutData() {
   }
   if (!docRef) {
     error.value = "Cannot save, database connection not established.";
-    return;
+    return false;
   }
   isSaving.value = true;
   error.value = null;
 
   try {
-    // Create a clean data object for Firestore.
-    // toRaw() gets the plain object, and the JSON dance removes any 'undefined' values
-    // that Firestore would reject. Add the lastUpdated timestamp before cleaning.
     const dataToSave = {
       ...toRaw(formData),
-      lastUpdated: new Date()
+      // Ensure these fields are always present on save
+      team: route.params.team,
+      match: route.params.match,
+      scout_uid: userId.value,
+      scout: userName.value,
+      lastUpdated: new Date(),
     };
     // Always update the timestamp and merge with the existing document.
-    await setDoc(docRef, JSON.parse(JSON.stringify(dataToSave)), { merge: true });
+    await setDoc(docRef, dataToSave, { merge: true });
     return true; // Indicate success
     // Navigate back to the schedule after saving.
     // \\

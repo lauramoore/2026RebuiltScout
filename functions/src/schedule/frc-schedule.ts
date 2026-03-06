@@ -61,7 +61,7 @@ async function updateAndStoreSchedule(query: ScheduleQuery): Promise<{
     }
 
     // Get the last-modified header from Firestore to use for caching
-    const eventDocRef = db.doc(`events/${eventCode}`);
+    const eventDocRef = db.doc(`competitions/${eventCode}`);
     const eventDoc = await eventDocRef.get();
     const lastModified = eventDoc.data()?.scheduleLastModified as string | undefined;
 
@@ -116,7 +116,7 @@ async function updateAndStoreSchedule(query: ScheduleQuery): Promise<{
     let matchesProcessed = 0;
     for (const match of scheduleData.Schedule) {
         if (match && match.description && Array.isArray(match.teams)) {
-            const docId = match.description.replace(/\s+/g, "");
+            const docId = String(match.matchNumber);
             const matchDocRef = eventDocRef.collection("schedule").doc(docId);
 
             const redAlliance = match.teams

@@ -24,4 +24,4 @@ initializeApp();
 // this will be the maximum concurrent request count.
 setGlobalOptions({ maxInstances: 10 });
 export { validateUserDomain } from "./users/precheck.js";
-export { importFrcSchedule, scheduledFrcScheduleImport } from "./schedule/frc-schedule.js";
+export { importFrcSchedule } from "./schedule/frc-schedule.js";

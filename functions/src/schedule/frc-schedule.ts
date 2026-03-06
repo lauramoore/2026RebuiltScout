@@ -1,15 +1,26 @@
 // In your Firebase Functions index.ts file
 
 import { HttpsError, onCall } from "firebase-functions/v2/https";
-import { onSchedule } from "firebase-functions/v2/scheduler";
 import { getFirestore } from "firebase-admin/firestore";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 // An interface for the schedule query parameters
 interface ScheduleQuery {
     year: string;
     eventCode: string;
     tournamentLevel: string;
+}
+
+// Interface for a single match from the FRC API
+interface FrcMatch {
+    description: string;
+    // Allow other properties from the API since we save the whole object
+    [key: string]: any;
+}
+
+// Interface for the schedule API response
+interface FrcScheduleResponse {
+    Schedule: FrcMatch[];
 }
 
 /**
@@ -42,7 +53,7 @@ async function updateAndStoreSchedule(query: ScheduleQuery): Promise<{
     // Get the last-modified header from Firestore to use for caching
     const eventDocRef = db.doc(`events/${eventCode}`);
     const eventDoc = await eventDocRef.get();
-    const lastModified = eventDoc.data()?.scheduleLastModified;
+    const lastModified = eventDoc.data()?.scheduleLastModified as string | undefined;
 
     const headers: { [key: string]: string } = {
         "Authorization": `Basic ${Buffer.from(`${username}:${apiKey}`).toString("base64")}`,
@@ -56,10 +67,10 @@ async function updateAndStoreSchedule(query: ScheduleQuery): Promise<{
     let apiResponse;
     try {
         const apiUrl = `https://frc-api.firstinspires.org/v3.0/${year}/schedule/${eventCode}?tournamentLevel=${tournamentLevel}`;
-        apiResponse = await axios.get(apiUrl, { headers });
+        apiResponse = await axios.get<FrcScheduleResponse>(apiUrl, { headers });
     } catch (error) {
         // If the API returns 304, it means the data has not been modified.
-        if (axios.isAxiosError(error) && error.response?.status === 304) {
+        if (isAxiosError(error) && error.response?.status === 304) {
             const message = `Schedule for ${eventCode} has not changed (304 Not Modified). No import needed.`;
             console.log(message);
             return {
@@ -73,7 +84,7 @@ async function updateAndStoreSchedule(query: ScheduleQuery): Promise<{
     }
 
     const scheduleData = apiResponse.data;
-    const newLastModified = apiResponse.headers["last-modified"];
+    const newLastModified = apiResponse.headers["last-modified"] as string;
 
     if (!scheduleData || !Array.isArray(scheduleData.Schedule)) {
         throw new Error("Schedule data not found or in an unexpected format from FRC API.");
@@ -141,7 +152,7 @@ export const importFrcSchedule = onCall(
             return result;
         } catch (error) {
             // Enhanced error handling
-            if (axios.isAxiosError(error)) {
+            if (isAxiosError(error)) {
                 console.error(`FRC API Error: ${error.message}`, error.response?.data);
                 throw new HttpsError(
                     "unavailable",
@@ -165,8 +176,7 @@ export const importFrcSchedule = onCall(
  *
  * TODO: Make the query parameters dynamic. You could read a list of active
  * events from a "config" collection in Firestore to decide which schedules to update.
- */
-export const scheduledFrcScheduleImport = onSchedule(
+ export const scheduledFrcScheduleImport = onSchedule(
     {
         schedule: "every 60 minutes",
         secrets: ["FRC_USERNAME", "FRC_API_KEY"],
@@ -188,4 +198,6 @@ export const scheduledFrcScheduleImport = onSchedule(
             console.error(`Scheduled import for ${query.eventCode} failed:`, error);
         }
     }
+
 );
+*/

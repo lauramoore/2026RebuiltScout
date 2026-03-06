@@ -9,12 +9,8 @@ export const validateUserDomain = beforeUserCreated((event) => {
   const email = user?.email;
   const domain = "waltonrobotics.org";
 
-  // This regex ensures the email is in a valid format and belongs to the specified domain.
-  // 1. It must not contain multiple '@' symbols.
-  // 2. The domain must be 'waltonrobotics.org' (case-insensitive).
-  const domainRegex = new RegExp(`^[^@\\s]+@${domain.replace(/\./g, "\\.")}$`, "i");
-
-  if (!email || !domainRegex.test(email)) {
+  // Firebase Auth validates the basic email format, so we only need to check the domain.
+  if (!email || !email.toLowerCase().endsWith(`@${domain}`)) {
     throw new HttpsError(
       "permission-denied",
       `Remember to use your @${domain} email address to sign-up.`

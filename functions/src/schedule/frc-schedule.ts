@@ -11,10 +11,20 @@ interface ScheduleQuery {
     tournamentLevel: string;
 }
 
+// Interface for a team in a match from the FRC API
+interface FrcTeam {
+    teamNumber: number;
+    station: string;
+    surrogate: boolean;
+}
+
 // Interface for a single match from the FRC API
 interface FrcMatch {
     description: string;
-    // Allow other properties from the API since we save the whole object
+    matchNumber: number;
+    startTime: string;
+    teams: FrcTeam[];
+    // Allow other properties from the API
     [key: string]: any;
 }
 
@@ -105,10 +115,25 @@ async function updateAndStoreSchedule(query: ScheduleQuery): Promise<{
 
     let matchesProcessed = 0;
     for (const match of scheduleData.Schedule) {
-        if (match && match.description) {
+        if (match && match.description && Array.isArray(match.teams)) {
             const docId = match.description.replace(/\s+/g, "");
             const matchDocRef = eventDocRef.collection("schedule").doc(docId);
-            batch.set(matchDocRef, match);
+
+            const redAlliance = match.teams
+                .filter((team) => team.station.startsWith("Red"))
+                .map((team) => team.teamNumber);
+
+            const blueAlliance = match.teams
+                .filter((team) => team.station.startsWith("Blue"))
+                .map((team) => team.teamNumber);
+
+            const firestoreRecord = {
+                matchNumber: match.matchNumber,
+                red: redAlliance,
+                blue: blueAlliance,
+            };
+
+            batch.set(matchDocRef, firestoreRecord);
             matchesProcessed++;
         }
     }

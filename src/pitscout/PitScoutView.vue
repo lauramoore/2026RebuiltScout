@@ -106,6 +106,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { uploadRobotPhoto, uploadScoutData, loadExistingData, getFileUrl } from './pitScoutDataService.js';
+import { auth } from '../firebase';
 
 const route = useRoute();
 const router = useRouter();

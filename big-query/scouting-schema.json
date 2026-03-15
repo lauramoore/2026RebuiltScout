@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Scouting Data",
+  "description": "Schema for scouting data collected for a team in a match, as stored in Firestore.",
+  "type": "object",
+  "properties": {
+    "team": {
+      "description": "FRC team number, e.g., '2974'. From route params, so it's a string.",
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "match": {
+      "description": "FRC match key, e.g., 'qm1'. From route params.",
+      "type": "string"
+    },
+    "scout_uid": {
+      "description": "Firebase UID of the scout who collected the data.",
+      "type": "string"
+    },
+    "scout": {
+      "description": "Email of the scout who collected the data.",
+      "type": "string",
+      "format": "email"
+    },
+    "lastUpdated": {
+      "description": "Timestamp of when the record was last updated. This is a Firestore Timestamp object, but serializes to ISO 8601 string in JSON.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "auton": {
+      "type": "object",
+      "properties": {
+        "startAt": {
+          "description": "Robot's starting position in autonomous period.",
+          "type": "string"
+        },
+        "scoring": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fromLocation": { "type": "string" },
+              "capacity": { "type": "integer", "minimum": 0 },
+              "speed": { "type": "integer", "minimum": 0 },
+              "accuracy": { "type": "integer", "minimum": 0 }
+            },
+            "required": ["fromLocation", "capacity", "speed", "accuracy"]
+          }
+        },
+        "climb": {
+          "type": "object",
+          "properties": {
+            "level": { "type": "integer" },
+            "start": { "type": "integer" },
+            "dismount": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "teleop": {
+      "type": "object",
+      "properties": {
+        "scoring": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from": { "type": "string" },
+              "capacity": { "type": "integer", "minimum": 0 },
+              "speed": { "type": "integer", "minimum": 0 },
+              "accuracy": { "type": "integer", "minimum": 0 }
+            },
+            "required": ["from", "capacity", "speed", "accuracy"]
+          }
+        },
+        "defense": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "defenseLocation": { "type": "string" },
+              "effective": { "type": "integer" }
+            },
+            "required": ["defenseLocation", "effective"]
+          }
+        },
+        "passing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fromLocation": { "type": "string" },
+              "toLocation": { "type": "string" },
+              "capacity": { "type": "integer", "minimum": 0 },
+              "speed": { "type": "integer", "minimum": 0 },
+              "accuracy": { "type": "integer", "minimum": 0 }
+            },
+            "required": ["fromLocation", "toLocation", "capacity", "speed", "accuracy"]
+          }
+        },
+        "climb": {
+          "type": "object",
+          "properties": {
+            "level": { "type": "integer" },
+            "start": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "penalties": {
+      "type": "object",
+      "properties": {
+        "penalties": { "type": "integer", "minimum": 0 },
+        "fouls": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "observations": {
+      "type": "object",
+      "properties": {
+        "notes": {
+          "description": "General notes about the team's performance in the match.",
+          "type": "string"
+        },
+        "categories": {
+          "description": "Qualitative tags, e.g., 'No Show', 'FAST_CYCLE'.",
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["notes", "categories"]
+    }
+  },
+  "required": [
+    "team",
+    "match",
+    "scout_uid",
+    "scout",
+    "lastUpdated"
+  ]
+}

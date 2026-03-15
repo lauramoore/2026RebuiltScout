@@ -20,9 +20,9 @@ interface SummarizableCycle {
   accuracy: number;
 }
 
-export const transformScoutingData = onRequest((req, res) => {
+export const transformScoutingData = onRequest(async (req, res) => {
   const payload = req.body as FirestoreEventPayload;
-  const data = payload.data;
+  const data = payload.data || {};
   const resource = payload.context?.resource || "";
 
   // 1. Extract Identifiers
@@ -96,11 +96,11 @@ export const transformScoutingData = onRequest((req, res) => {
     // Metadata
     document_id: documentId,
     event_id: eventId,
-    team: data.team,
-    match_id: data.match,
-    scout: data.scout,
-    scout_uid: data.scout_uid,
-    last_updated: data.lastUpdated,
+    team: data.team || "",
+    match_id: data.match || "",
+    scout: data.scout || "",
+    scout_uid: data.scout_uid || "",
+    last_updated: data.lastUpdated || "",
 
     // Auton
     auto_score_cycles: autonScoreStats.count,

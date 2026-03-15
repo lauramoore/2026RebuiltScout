@@ -25,7 +25,7 @@ export interface ScoutingData {
     penalties?: number;
   };
   observations: {
-    notes: string;
+    notes?: string;
     categories: string[];
   };
 }
@@ -41,46 +41,54 @@ export interface FlattenedScoutingRow {
   last_updated: string;
 
   // Auton Scoring
-  auton_score_count: number;
-  auton_score_total_cap: number;
-  auton_score_avg_speed: number;
-  auton_score_min_speed: number;
-  auton_score_max_speed: number;
-  auton_score_avg_accuracy: number;
-  auton_score_min_accuracy: number;
-  auton_score_max_accuracy: number;
+  auto_score_cycles: number;
+  auto_score_avg_cap: number;
+  auto_score_max_cap: number;
+  auto_score_min_cap: number;
+  auto_score_avg_speed: number;
+  auto_score_min_speed: number;
+  auto_score_max_speed: number;
+  auto_score_avg_accuracy: number;
+  auto_score_min_accuracy: number;
+  auto_score_max_accuracy: number;
 
   // Auton Climb
-  auton_climb_level: number;
+  auto_climb_level: number;
+  auto_climb_speed: number;
+  auto_dismount_speed: number;
 
   // Teleop Scoring
-  teleop_score_count: number;
-  teleop_score_total_cap: number;
-  teleop_score_avg_speed: number;
-  teleop_score_min_speed: number;
-  teleop_score_max_speed: number;
-  teleop_score_avg_accuracy: number;
-  teleop_score_min_accuracy: number;
-  teleop_score_max_accuracy: number;
+  tele_score_cycles: number;
+  tele_score_avg_cap: number;
+  tele_score_max_cap: number;
+  tele_score_min_cap: number;
+  tele_score_avg_speed: number;
+  tele_score_min_speed: number;
+  tele_score_max_speed: number;
+  tele_score_avg_accuracy: number;
+  tele_score_min_accuracy: number;
+  tele_score_max_accuracy: number;
 
   // Teleop Passing
-  teleop_pass_count: number;
-  teleop_pass_total_cap: number;
-  teleop_pass_avg_speed: number;
-  teleop_pass_min_speed: number;
-  teleop_pass_max_speed: number;
-  teleop_pass_avg_accuracy: number;
-  teleop_pass_min_accuracy: number;
-  teleop_pass_max_accuracy: number;
+  tele_pass_cycles: number;
+  tele_pass_avg_cap: number;
+  tele_pass_max_cap: number;
+  tele_pass_min_cap: number;
+  tele_pass_avg_speed: number;
+  tele_pass_min_speed: number;
+  tele_pass_max_speed: number;
+  tele_pass_avg_accuracy: number;
+  tele_pass_min_accuracy: number;
+  tele_pass_max_accuracy: number;
 
   // Teleop Defense
-  teleop_defense_count: number;
-  teleop_defense_avg_effective: number;
-  teleop_defense_min_effective: number;
-  teleop_defense_max_effective: number;
+  tele_defense_cycles: number;
+  tele_defense_avg_effective: number;
+  tele_defense_min_effective: number;
+  tele_defense_max_effective: number;
 
   // Teleop Climb
-  teleop_climb_level: number;
+  tele_climb_level: number;
 
   // Penalties
   foul_count: number;

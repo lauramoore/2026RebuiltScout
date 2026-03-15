@@ -1,20 +1,29 @@
 import { onRequest } from "firebase-functions/v2/https";
+import {
+  ScoutingData,
+  FlattenedScoutingRow,
+  DefenseCycle
+} from "./scout_types.js";
 
-// Interfaces based on scouting-schema.json
-interface Cycle {
+// The payload structure for the HTTP request body.
+interface FirestoreEventPayload {
+  data: ScoutingData;
+  context: {
+    resource: string;
+  };
+}
+
+// A cycle that can be summarized by summarizeCycles
+interface SummarizableCycle {
   capacity: number;
   speed: number;
   accuracy: number;
 }
 
-interface DefenseCycle {
-  effective: number;
-}
-
 export const transformScoutingData = onRequest((req, res) => {
-  const payload = req.body;
+  const payload = req.body as FirestoreEventPayload;
   const data = payload.data;
-  const resource = payload.context.resource;
+  const resource = payload.context?.resource || "";
 
   // 1. Extract Identifiers
   const pathParts = resource.split('/');
@@ -23,13 +32,13 @@ export const transformScoutingData = onRequest((req, res) => {
   const eventId = pathParts[pathParts.indexOf('events') + 1] || 'unknown';
 
   // 2. Helper for cycle math
-  const summarizeCycles = (cycles: Cycle[] = []) => {
+  const summarizeCycles = (cycles: SummarizableCycle[] = []) => {
     if (!cycles.length) {
       return {
         count: 0,
-        total_cap: 0,
+        avg_cap: 0, min_cap: 0, max_cap: 0,
         avg_speed: 0, min_speed: 0, max_speed: 0,
-        avg_acc: 0, min_acc: 0, max_acc: 0,
+        avg_accuracy: 0, min_accuracy: 0, max_accuracy: 0,
       };
     }
 
@@ -41,16 +50,19 @@ export const transformScoutingData = onRequest((req, res) => {
 
     const speeds = cycles.map(c => c.speed || 0);
     const accuracies = cycles.map(c => c.accuracy || 0);
+    const capacities = cycles.map(c => c.capacity || 0);
 
     return {
       count: cycles.length,
-      total_cap: totals.capacity,
+      avg_cap: Number((totals.capacity / cycles.length).toFixed(2)),
+      max_cap: Math.max(... capacities),
+      min_cap: Math.min(... capacities),
       avg_speed: Number((totals.speed / cycles.length).toFixed(2)),
       min_speed: Math.min(...speeds),
       max_speed: Math.max(...speeds),
-      avg_acc: Number((totals.accuracy / cycles.length).toFixed(2)),
-      min_acc: Math.min(...accuracies),
-      max_acc: Math.max(...accuracies),
+      avg_accuracy: Number((totals.accuracy / cycles.length).toFixed(2)),
+      min_accuracy: Math.min(...accuracies),
+      max_accuracy: Math.max(...accuracies),
     };
   };
 
@@ -58,18 +70,18 @@ export const transformScoutingData = onRequest((req, res) => {
     if (!cycles.length) {
       return {
         count: 0,
-        avg_effectiveness: 0,
-        min_effectiveness: 0,
-        max_effectiveness: 0,
+        avg_effective: 0,
+        min_effective: 0,
+        max_effective: 0,
       };
     }
     const effectiveness_scores = cycles.map(c => c.effective || 0);
     const totalEffect = effectiveness_scores.reduce((acc, e) => acc + e, 0);
     return {
       count: cycles.length,
-      avg_effectiveness: Number((totalEffect / cycles.length).toFixed(2)),
-      min_effectiveness: Math.min(...effectiveness_scores),
-      max_effectiveness: Math.max(...effectiveness_scores),
+      avg_effective: Number((totalEffect / cycles.length).toFixed(2)),
+      min_effective: Math.min(...effectiveness_scores),
+      max_effective: Math.max(...effectiveness_scores),
     };
   };
 
@@ -80,7 +92,7 @@ export const transformScoutingData = onRequest((req, res) => {
   const defenseStats = summarizeDefense(data.teleop?.defense);
 
   // 4. Construct Final Flat Object
-  const flattened = {
+  const flattened: FlattenedScoutingRow = {
     // Metadata
     document_id: documentId,
     event_id: eventId,
@@ -91,50 +103,56 @@ export const transformScoutingData = onRequest((req, res) => {
     last_updated: data.lastUpdated,
 
     // Auton
-    auton_score_count: autonScoreStats.count,
-    auton_score_total_cap: autonScoreStats.total_cap,
-    auton_score_avg_speed: autonScoreStats.avg_speed,
-    auton_score_min_speed: autonScoreStats.min_speed,
-    auton_score_max_speed: autonScoreStats.max_speed,
-    auton_score_avg_accuracy: autonScoreStats.avg_acc,
-    auton_score_min_accuracy: autonScoreStats.min_acc,
-    auton_score_max_accuracy: autonScoreStats.max_acc,
-    auton_climb_level: data.auton?.climb?.level || 0,
+    auto_score_cycles: autonScoreStats.count,
+    auto_score_avg_cap: autonScoreStats.avg_cap,
+    auto_score_max_cap: autonScoreStats.max_cap,
+    auto_score_min_cap: autonScoreStats.min_cap,
+    auto_score_avg_speed: autonScoreStats.avg_speed,
+    auto_score_min_speed: autonScoreStats.min_speed,
+    auto_score_max_speed: autonScoreStats.max_speed,
+    auto_score_avg_accuracy: autonScoreStats.avg_accuracy,
+    auto_score_min_accuracy: autonScoreStats.min_accuracy,
+    auto_score_max_accuracy: autonScoreStats.max_accuracy,
+    auto_climb_level: data.auton?.climb?.level || 0,
+    auto_climb_speed: data.auton?.climb?.start || 0,
+    auto_dismount_speed: data.auton?.climb?.dismount || 0,
 
     // Teleop Scoring
-    teleop_score_count: teleopScoreStats.count,
-    teleop_score_total_cap: teleopScoreStats.total_cap,
-    teleop_score_avg_speed: teleopScoreStats.avg_speed,
-    teleop_score_min_speed: teleopScoreStats.min_speed,
-    teleop_score_max_speed: teleopScoreStats.max_speed,
-    teleop_score_avg_accuracy: teleopScoreStats.avg_acc,
-    teleop_score_min_accuracy: teleopScoreStats.min_acc,
-    teleop_score_max_accuracy: teleopScoreStats.max_acc,
+    tele_score_cycles: teleopScoreStats.count,
+    tele_score_avg_cap: teleopScoreStats.avg_cap,
+    tele_score_min_cap: teleopScoreStats.min_cap,
+    tele_score_max_cap: teleopScoreStats.max_cap,
+    tele_score_avg_speed: teleopScoreStats.avg_speed,
+    tele_score_min_speed: teleopScoreStats.min_speed,
+    tele_score_max_speed: teleopScoreStats.max_speed,
+    tele_score_avg_accuracy: teleopScoreStats.avg_accuracy,
+    tele_score_min_accuracy: teleopScoreStats.min_accuracy,
+    tele_score_max_accuracy: teleopScoreStats.max_accuracy,
 
     // Passing & Defense
-    teleop_pass_count: passingStats.count,
-    teleop_pass_total_cap: passingStats.total_cap,
-    teleop_pass_avg_speed: passingStats.avg_speed,
-    teleop_pass_min_speed: passingStats.min_speed,
-    teleop_pass_max_speed: passingStats.max_speed,
-    teleop_pass_avg_accuracy: passingStats.avg_acc,
-    teleop_pass_min_accuracy: passingStats.min_acc,
-    teleop_pass_max_accuracy: passingStats.max_acc,
+    tele_pass_cycles: passingStats.count,
+    tele_pass_avg_cap: passingStats.avg_cap,
+    tele_pass_max_cap: passingStats.max_cap,
+    tele_pass_min_cap: passingStats.min_cap,
+    tele_pass_avg_speed: passingStats.avg_speed,
+    tele_pass_min_speed: passingStats.min_speed,
+    tele_pass_max_speed: passingStats.max_speed,
+    tele_pass_avg_accuracy: passingStats.avg_accuracy,
+    tele_pass_min_accuracy: passingStats.min_accuracy,
+    tele_pass_max_accuracy: passingStats.max_accuracy,
 
     // Teleop Defense
-    teleop_defense_count: defenseStats.count,
-    teleop_defense_avg_effective: defenseStats.avg_effectiveness,
-    teleop_defense_min_effective: defenseStats.min_effectiveness,
-    teleop_defense_max_effective: defenseStats.max_effectiveness,
+    tele_defense_cycles: defenseStats.count,
+    tele_defense_avg_effective: defenseStats.avg_effective,
+    tele_defense_min_effective: defenseStats.min_effective,
+    tele_defense_max_effective: defenseStats.max_effective,
 
     // Teleop Climb
-    teleop_climb_level: data.teleop?.climb?.level || 0,
+    tele_climb_level: data.teleop?.climb?.level || 0,
 
     // Observations
     notes: data.observations?.notes || "",
     categories: data.observations?.categories?.join(", ") || "",
-    cat_broken: data.observations?.categories?.includes("broken") || false,
-    cat_noshow: data.observations?.categories?.includes("no-show") || false,
 
     // Penalties
     foul_count: data.penalties?.fouls || 0,

@@ -40,7 +40,7 @@ const router = useRouter();
 
 let unsubscribeSchedule = null;
 let unsubscribeAuth = null;
-const eventCode = 'gadal';
+const eventCode = 'gagwi';
 
 function setupScheduleListener() {
   // Ensure we don't create duplicate listeners if this function is ever called again.

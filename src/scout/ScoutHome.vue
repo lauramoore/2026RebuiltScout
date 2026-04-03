@@ -40,8 +40,7 @@ const router = useRouter();
 
 let unsubscribeSchedule = null;
 let unsubscribeAuth = null;
-const eventCode = 'gacol';
-
+const eventCode = 'gagai';
 function setupScheduleListener() {
   // Ensure we don't create duplicate listeners if this function is ever called again.
   if (unsubscribeSchedule) unsubscribeSchedule();

@@ -1,7 +1,7 @@
 
 const routes = [
    { path: '/games',
-    name: 'games-dashboard',
+    name: 'games-home',
     component: () => import('./views/GamesDashboard.vue'),
     meta: { requiresAuth: true }
    }

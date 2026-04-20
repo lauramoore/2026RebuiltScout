@@ -11,11 +11,11 @@
   <header>
      <router-link class="nav-button" :to="route.params.event ? { name: 'home', params: { event: route.params.event } } : '/'">
         <IconHome />
-        Home
+         Scout
       </router-link>
-       <router-link class="nav-button" :to="route.params.event ? { name: 'pitscout-home', params: { event: route.params.event } } : '/pitscout'">
+       <router-link class="nav-button" :to="route.params.event ? { name: 'games-home', params: { event: route.params.event } } : '/games'">
         <IconEcosystem />
-          Pit Scout
+          Games
       </router-link>
   </header>
   <RouterView />

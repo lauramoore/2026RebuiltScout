@@ -1,36 +1,18 @@
 <template>
-  <h3>Collection</h3>
-  <div class="form-group form-group-grid">
-    <label>
-      <input type="radio" value="home" v-model="fromLocation" /> Home
-    </label>
-    <label>
-      <input type="radio" value="depot" v-model="fromLocation" /> Depot
-    </label>
-    <label>
-      <input type="radio" value="outpost" v-model="fromLocation" /> Outpost
-    </label>
-    <label>
-      <input type="radio" value="neutral" v-model="fromLocation" /> Neutral
-    </label>
-     <label>
-      <input type="radio" value="opposing" v-model="fromLocation" /> Opposing
-    </label>
-  </div>
 
+  <h3>Shooting</h3>
   <div class="form-group">
-    <h4>Fill Level</h4>
+    <h4>Capacity</h4>
     <label>
-      <input type="radio" value="1" v-model="capacity" /> &lt;30
+      <input type="radio" value="1" v-model="capacity" /> 1
     </label>
     <label>
-      <input type="radio" value="3" v-model="capacity" /> 30 - 75
+      <input type="radio" value="3" v-model="capacity" /> 3
     </label>
     <label>
-      <input type="radio" value="7" v-model="capacity" /> 80%+
+      <input type="radio" value="7" v-model="capacity" /> 7
     </label>
   </div>
-  <h3>Shooting</h3>
   <div class="form-group">
     <h4>Rate</h4>
     <label>
@@ -55,11 +37,6 @@
       <input type="radio" value="7" v-model="accuracy" /> 80%+
     </label>
   </div>
-  <div class="form-group">
-     <label>
-      <input type="checkbox" value="true" v-model="mobileShotCapable" /> on the move
-    </label>
-  </div>
 </template>
 
 <script setup>
@@ -81,9 +58,7 @@ const useVModel = (key) => {
     });
 };
 
-const fromLocation = useVModel('fromLocation');
 const capacity = useVModel('capacity');
 const speed = useVModel('speed');
 const accuracy = useVModel('accuracy');
-const mobileShotCapable = useVModel('mobileShotCapable');
 </script>

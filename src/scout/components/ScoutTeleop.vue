@@ -1,8 +1,20 @@
 <template>
   <h1>Teleop</h1>
+  <h3>Driver Skill</h3>
+  <div class="form-group">
+    <label>
+      <input type="radio" value="1" v-model="driverSkill" /> 1
+    </label>
+    <label>
+      <input type="radio" value="3" v-model="driverSkill" /> 3
+    </label>
+    <label>
+      <input type="radio" value="7" v-model="driverSkill" /> 7
+    </label>
+  </div>
   <div>
     <router-link :to="{ name: 'scout-teleop-passing', params: $route.params }" custom v-slot="{ navigate, isActive }">
-      <button :class="{ active: isActive }" @click="navigate">Passing/Stockpiling</button>
+      <button :class="{ active: isActive }" @click="navigate">Stockpiling</button>
     </router-link>
     <router-link :to="{ name: 'scout-teleop-scoring', params: $route.params }" custom v-slot="{ navigate, isActive }">
       <button :class="{ active: isActive }" @click="navigate">Scoring</button>

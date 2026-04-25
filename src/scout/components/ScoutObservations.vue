@@ -9,16 +9,16 @@
       <input type="checkbox" value="bump" v-model="categories" />Uses Bump
     </label>
     <label>
-      <input type="checkbox" value="2e2Shooter" v-model="categories" />End-To-End Passing
+      <input type="checkbox" value="2e2Shooter" v-model="categories" />Full Field Passing
     </label>
     <label>
-      <input type="checkbox" value="bulldozer" v-model="categories" />Fuel Bulldozer
+      <input type="checkbox" value="bulldozer" v-model="categories" />Shove into Outpost
+    </label>
+     <label>
+      <input type="checkbox" value="bulldozer" v-model="categories" />Shoot on the move
     </label>
      <label>
       <input type="checkbox" value="didNotShow" v-model="categories" />Never Showed
-    </label>
-      <label>
-      <input type="checkbox" value="inTheWay" v-model="categories" />Blocked Partners
     </label>
     <label>
       <input type="checkbox" value="broken" v-model="categories" />Broke During Match

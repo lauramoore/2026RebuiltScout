@@ -3,7 +3,6 @@ import { getAuth, GoogleAuthProvider, onAuthStateChanged, connectAuthEmulator } 
 import { connectFirestoreEmulator, initializeFirestore, persistentLocalCache, getFirestore} from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
-import { getStorage, connectStorageEmulator } from 'firebase/storage';
 import { getAnalytics } from "firebase/analytics";
 
 

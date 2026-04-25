@@ -1,7 +1,7 @@
 <template>
   <div v-if="error" class="error-message">{{ error }}</div>
   <div v-else>
-    <h1>Match #{{ route.params.match }} Team #{{ route.params.team }}</h1>
+    <h1>Team #{{ route.params.match }} Match #{{ route.params.team }}</h1>
     <header>
       <nav>
         <!-- Use named routes for robust navigation -->

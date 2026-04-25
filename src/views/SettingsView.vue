@@ -10,6 +10,7 @@
 
     <div>
       <button @click="scheduleUpdate">Update Schedule</button>
+      <button @click="updateTeams">Update Teams</button>
     </div>
 
 
@@ -21,7 +22,7 @@ import { ref, onMounted } from 'vue';
 import { functions } from '../firebase.js'
 import { httpsCallable } from 'firebase/functions';
 
-const eventId = ref('gadal');
+const eventId = ref('MILSTEIN');
 const season = ref('2026');
 
 async function scheduleUpdate() {
@@ -58,6 +59,41 @@ async function scheduleUpdate() {
     alert(`An error occurred while updating the schedule: ${error.message}`);
   }
 }
+
+async function updateTeams() {
+  const callImportFrcTeams = httpsCallable(functions, 'importFrcTeams');
+
+  if (!eventId.value) {
+    alert('Please select an event first.');
+    return;
+  }
+
+  const teamQuery = {
+    year: String(season.value),
+    eventCode: eventId.value
+  };
+
+  console.log(`Calling importFrcTeams with:`, teamQuery);
+  alert('Updating teams... This may take a moment.');
+
+  try {
+    const result = await callImportFrcTeams(teamQuery);
+    const data = result.data;
+
+    if (data.success) {
+      console.log(`Successfully imported teams: ${data.message}`);
+      alert(`Teams updated! ${data.saved} teams saved.`);
+    } else {
+      console.warn(`Function reported an issue: ${data.message}`);
+      alert(`Could not update teams: ${data.message}`);
+    }
+  } catch (error) {
+    console.error(`Error calling function: ${error.code} - ${error.message}`);
+    alert(`An error occurred while updating teams: ${error.message}`);
+  }
+}
+
+
 
 onMounted(async () => {
 

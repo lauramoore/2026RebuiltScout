@@ -25,3 +25,4 @@ initializeApp();
 setGlobalOptions({ maxInstances: 10 });
 export { validateUserDomain } from "./users/precheck.js";
 export { importFrcSchedule } from "./schedule/frc-schedule.js";
+export { importFrcTeams } from "./schedule/team-listing.js";

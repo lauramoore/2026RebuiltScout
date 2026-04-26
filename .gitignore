@@ -35,3 +35,5 @@ dev-data/
 .env
 apphosting.*
 .firebase/
+cli/data
+**/serviceAccountKey.json

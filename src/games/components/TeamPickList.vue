@@ -47,7 +47,6 @@ watch(() => props.selection, (newSelection) => {
   <div class="team-picklist-container">
     <ol class="picklist">
       <li v-for="index in maxTeams" :key="`pick-${index}`">
-        <span class="rank-label">{{ index }}.</span>
         <select
           v-model="selectedTeams[index - 1]"
           @change="handleSelectionChange"

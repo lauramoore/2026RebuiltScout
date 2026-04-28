@@ -123,7 +123,7 @@ async function savePicklist() {
 
 <template>
   <div class="alliance-selection">
-    <h1>Alliance Selection Picklist</h1>
+    <h1>Alliance Captians Prediction</h1>
     <div v-if="error" class="error-message">{{ error }}</div>
     <div v-if="loading">Loading teams...</div>
     <div v-else-if="allTeams.length > 0">
@@ -132,10 +132,10 @@ async function savePicklist() {
         :all-teams="allTeams"
         v-model:selection="selectedTeams"
       />
-      <button @click="savePicklist">Save Picklist</button>
+      <button @click="savePicklist">Save Predictions</button>
     </div>
     <div v-else-if="!error">
-      <p>No teams available to create a picklist.</p>
+      <p>No teams loaded for event.</p>
     </div>
   </div>
 </template>

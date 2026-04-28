@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   allTeams: {
@@ -11,24 +11,21 @@ const props = defineProps({
     type: Number,
     default: 8
   },
-  initialSelection: {
+  selection: {
     type: Array,
     default: () => []
   }
 });
 
 const emit = defineEmits(['update:selection']);
-
-// Initialize selection based on maxTeams prop
-const selectedTeams = ref(
-  Array.from({ length: props.maxTeams }, (_, i) => props.initialSelection[i] || null)
-);
+const selectedTeams = ref([]);
 
 // Check if a team is already selected in another slot to prevent duplicates
 function isTeamSelected(teamNumber, currentIndex) {
   if (!teamNumber) return false;
-  return selectedTeams.value.some((selectedNumber, index) => {
-    return index !== currentIndex && selectedNumber === teamNumber;
+  return selectedTeams.value.some((selectedTeam, index) => {
+    // selectedTeam can be a team object or null
+    return index !== currentIndex && selectedTeam?.teamNumber === teamNumber;
   });
 }
 
@@ -36,6 +33,14 @@ function isTeamSelected(teamNumber, currentIndex) {
 function handleSelectionChange() {
   emit('update:selection', [...selectedTeams.value]);
 }
+
+// When the selection prop from the parent changes (e.g., after async data load),
+// update the internal state of this component.
+watch(() => props.selection, (newSelection) => {
+  selectedTeams.value = Array.from({ length: props.maxTeams }, (_, i) => {
+    return (newSelection && newSelection[i]) || null;
+  });
+}, { immediate: true });
 </script>
 
 <template>
@@ -52,7 +57,7 @@ function handleSelectionChange() {
           <option
             v-for="team in allTeams"
             :key="team.teamNumber"
-            :value="team.teamNumber"
+            :value="team"
             :disabled="isTeamSelected(team.teamNumber, index - 1)"
           >
             {{ team.teamNumber }} - {{ team.nameShort || team.nickname }}

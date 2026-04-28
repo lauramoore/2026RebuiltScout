@@ -130,8 +130,7 @@ async function savePicklist() {
       <TeamPickList
         :key="eventCode"
         :all-teams="allTeams"
-        :initial-selection="selectedTeams"
-        @update:selection="selectedTeams = $event"
+        v-model:selection="selectedTeams"
       />
       <button @click="savePicklist">Save Picklist</button>
     </div>

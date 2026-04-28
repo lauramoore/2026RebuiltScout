@@ -12,10 +12,10 @@
       <input type="checkbox" value="2e2Shooter" v-model="categories" />Full Field Passing
     </label>
     <label>
-      <input type="checkbox" value="bulldozer" v-model="categories" />Shove into Outpost
+      <input type="checkbox" value="shove2outpost" v-model="categories" />Shove into Outpost
     </label>
      <label>
-      <input type="checkbox" value="bulldozer" v-model="categories" />Shoot on the move
+      <input type="checkbox" value="shootnmove" v-model="categories" />Shoot on the move
     </label>
      <label>
       <input type="checkbox" value="didNotShow" v-model="categories" />Never Showed

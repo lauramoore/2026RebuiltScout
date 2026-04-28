@@ -12,8 +12,8 @@
     },
     "wrt-firebase-web-app": {
       "extensionInstances": {
-        "firestore-bigquery-export": "fb624d1c1bca9869ecd15762b354cfbb731df72e879cf8a25191a4073a662e29"
+        "firestore-bigquery-export": "0511c2a175ed2d2bc395bbd7223d54348ce1ec638b280085e5a1268a11dfe683"
       }
     }
   }
-}
+}git rester

@@ -4,10 +4,12 @@ import { useRoute } from 'vue-router';
 import TeamPickList from '../components/TeamPickList.vue';
 import { db } from '../../firebase.js';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const route = useRoute();
 const eventCode = computed(() => route.params.event || 'MILSTEIN');
 
+const userId = ref(null);
 const allTeams = ref([]);
 const selectedTeams = ref(Array(8).fill(null));
 const loading = ref(true);
@@ -21,42 +23,74 @@ async function fetchData() {
     allTeams.value = [];
     return;
   }
+  if (!userId.value) {
+    error.value = "You must be logged in to view or edit a picklist.";
+    loading.value = false;
+    allTeams.value = [];
+    selectedTeams.value = Array(8).fill(null);
+    return;
+  }
   loading.value = true;
   error.value = null;
 
   try {
+    // 1. Fetch all teams for the event to populate selection dropdowns
     const eventDocRef = doc(db, 'competitions', eventCode.value);
     const eventDoc = await getDoc(eventDocRef);
 
-    if (eventDoc.exists()) {
-      const data = eventDoc.data();
-      if (data.teams && data.teams.length > 0) {
-        // Sort teams by team number for a consistent dropdown order
-        allTeams.value = [...data.teams].sort((a, b) => a.teamNumber - b.teamNumber);
-      } else {
-        error.value = "No teams found for this event. Please import teams from the Settings page.";
-      }
+    if (eventDoc.exists() && eventDoc.data().teams?.length > 0) {
+      // Sort teams by team number for a consistent dropdown order
+      allTeams.value = [...eventDoc.data().teams].sort((a, b) => a.teamNumber - b.teamNumber);
+    } else {
+      error.value = "No teams found for this event. Please import teams from the Settings page.";
+      allTeams.value = [];
+      selectedTeams.value = Array(8).fill(null);
+      loading.value = false;
+      return;
+    }
 
-      // Load saved picklist if it exists
-      if (data.picklist && Array.isArray(data.picklist)) {
-        selectedTeams.value = Array.from({ length: 8 }, (_, i) => data.picklist[i] || null);
+    // 2. Fetch the user's picklist
+    const picklistDocRef = doc(db, 'captains', userId.value);
+    const picklistDoc = await getDoc(picklistDocRef);
+
+    if (picklistDoc.exists()) {
+      const picklistData = picklistDoc.data();
+      if (picklistData.teams && Array.isArray(picklistData.teams)) {
+        // The saved picklist is an array of team numbers.
+        // We need to map these numbers back to the full team objects for the TeamPickList component.
+        const teamMap = new Map(allTeams.value.map(t => [t.teamNumber, t]));
+        const loadedTeams = picklistData.teams.map(teamNumber => teamMap.get(teamNumber) || null);
+        // Ensure the array is exactly 8 elements long, padding with null if needed.
+        selectedTeams.value = Array.from({ length: 8 }, (_, i) => loadedTeams[i] || null);
       } else {
-        // If no picklist, initialize with an empty array of 8 slots
         selectedTeams.value = Array(8).fill(null);
       }
     } else {
-      error.value = "Event data not found. Please import teams and schedule from the Settings page.";
+      // No picklist document exists for this user yet.
+      selectedTeams.value = Array(8).fill(null);
     }
   } catch (e) {
     console.error("Error fetching data:", e);
-    error.value = `Failed to load team list: ${e.message}`;
+    error.value = `Failed to load data: ${e.message}`;
   } finally {
     loading.value = false;
   }
 }
 
 onMounted(() => {
-  fetchData();
+  const auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      userId.value = user.uid;
+      fetchData();
+    } else {
+      userId.value = null;
+      error.value = "You must be logged in to manage a picklist.";
+      loading.value = false;
+      allTeams.value = [];
+      selectedTeams.value = Array(8).fill(null);
+    }
+  });
 });
 
 // Re-fetch data if the event parameter in the URL changes
@@ -67,13 +101,18 @@ watch(eventCode, (newEventCode, oldEventCode) => {
 });
 
 async function savePicklist() {
-  if (!eventCode.value) {
-    alert("Cannot save, no event specified.");
+  if (!userId.value) {
+    alert("Cannot save, you are not logged in.");
     return;
   }
   try {
-    const eventDocRef = doc(db, 'competitions', eventCode.value);
-    await setDoc(eventDocRef, { picklist: selectedTeams.value }, { merge: true });
+    const picklistDocRef = doc(db, 'captains', userId.value);
+    // Ensure we save exactly 8 elements, padding with null for empty slots.
+    const teamNumbers = Array.from({ length: 8 }, (_, i) => {
+        const team = selectedTeams.value[i];
+        return team?.teamNumber ?? null;
+    });
+    await setDoc(picklistDocRef, { teams: teamNumbers });
     alert("Picklist saved successfully!");
   } catch (e) {
     console.error("Error saving picklist:", e);

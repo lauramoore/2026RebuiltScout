@@ -8,18 +8,33 @@ service cloud.firestore {
   }
 
   match /databases/{database}/documents {
-    // Allow all authenticated Walton Robotics users to read any document.
-    match /{document=**} {
+    // Allow all authenticated Walton Robotics users to read any document in competitions.
+    match /competitions/{competition}/{document=**} {
       allow read: if isWaltonRoboticsUser();
     }
-   
+
     // Rules for writing scouting data.
     match /competitions/{competition}/matches/{matchId}/scouting/{docId} {
       allow create: if isWaltonRoboticsUser();
 
-      // Allow UPDATE if the user is the owner of the existing document.
-      // This also prevents a user from changing the ownership, match, or team.
       allow update: if isWaltonRoboticsUser();
+    }
+
+    // Captain's picks are private to each user.
+    match /captains/{userId} {
+      allow read: if isWaltonRoboticsUser() && request.auth.uid == userId;
+      allow write: if isWaltonRoboticsUser() &&
+                      request.auth.uid == userId &&
+                      request.resource.data.teams is list &&
+                      request.resource.data.teams.size() == 8 && // Ensure exactly 8 elements
+                      (request.resource.data.teams[0] is number || request.resource.data.teams[0] == null) &&
+                      (request.resource.data.teams[1] is number || request.resource.data.teams[1] == null) &&
+                      (request.resource.data.teams[2] is number || request.resource.data.teams[2] == null) &&
+                      (request.resource.data.teams[3] is number || request.resource.data.teams[3] == null) &&
+                      (request.resource.data.teams[4] is number || request.resource.data.teams[4] == null) &&
+                      (request.resource.data.teams[5] is number || request.resource.data.teams[5] == null) &&
+                      (request.resource.data.teams[6] is number || request.resource.data.teams[6] == null) &&
+                      (request.resource.data.teams[7] is number || request.resource.data.teams[7] == null);
     }
   }
 }

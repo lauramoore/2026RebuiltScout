@@ -78,6 +78,14 @@ const climb = computed({
   }
 });
 
+const driverSkill = computed( {
+  get: () => props.modelValue.driverSkill || 0,
+  set: (driverSkill) => {
+    model.value = { ... model.value, driverSkill: driverSkill}
+  }
+
+});
+
 // Determine which type of cycle is active based on the route name
 const currentCycleType = computed(() => {
   const routeName = String(route.name || '');

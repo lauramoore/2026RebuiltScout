@@ -4,6 +4,13 @@ import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { getFirestore } from "firebase-admin/firestore";
 import axios, { isAxiosError } from "axios";
 
+const availableQuestions = [
+  'ALLIANCE2WIN',
+  'AUTOWIN',
+  'TELEOPWIN',
+  'BLUERANKING',
+  'REDRANKING'
+]
 // An interface for the schedule query parameters
 interface ScheduleQuery {
     year: string;
@@ -33,6 +40,15 @@ interface FrcScheduleResponse {
     Schedule: FrcMatch[];
 }
 
+// Helper function to shuffle an array (Fisher-Yates algorithm)
+function shuffleArray<T>(array: T[]): T[] {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+ }
+
 /**
  * Core logic to fetch a schedule from the FRC API and store it in Firestore.
  * This function is designed to be called by other cloud functions.
@@ -46,6 +62,7 @@ async function updateAndStoreSchedule(query: ScheduleQuery): Promise<{
     matchesSaved: number;
 }> {
     // Lazily initialize Firestore to ensure the Firebase app is initialized.
+
     const db = getFirestore();
 
     const { year, eventCode, tournamentLevel } = query;
@@ -110,9 +127,19 @@ async function updateAndStoreSchedule(query: ScheduleQuery): Promise<{
         };
     }
 
+    // Generate a list of questions for each match, repeating from the available pool if necessary,
+    // and then shuffle them to ensure a random distribution across matches.
+    const numMatches = scheduleData.Schedule.length;
+    const questionsForMatches: string[] = [];
+
+    // Fill the array with questions, repeating from the available pool
+    for (let i = 0; i < numMatches; i++) {
+        questionsForMatches.push(availableQuestions[i % availableQuestions.length]);
+    }
+    shuffleArray(questionsForMatches);
+
     // 3. Prepare a Firestore batch write
     const batch = db.batch();
-
     let matchesProcessed = 0;
     for (const match of scheduleData.Schedule) {
         if (match && match.description && Array.isArray(match.teams)) {
@@ -131,14 +158,17 @@ async function updateAndStoreSchedule(query: ScheduleQuery): Promise<{
                 matchNumber: match.matchNumber,
                 red: redAlliance,
                 blue: blueAlliance,
-            };
+                startTime: match.startTime,
+                question: questionsForMatches[matchesProcessed], // Assign one of the shuffled questions
+                questionStatus: 'open'
+              };
 
             batch.set(matchDocRef, firestoreRecord);
             matchesProcessed++;
         }
     }
 
-    // Also update the parent event doc with the new last-modified header
+    // Also update the parent event doc with the new last-modified headerimport {QUESTIONS, STATUS_CODES} from '@scouting/shared';
     if (newLastModified) {
         batch.set(eventDocRef, { scheduleLastModified: newLastModified }, { merge: true });
     }
@@ -182,7 +212,7 @@ export const importFrcSchedule = onCall(
                 throw new HttpsError(
                     "unavailable",
                     "Failed to fetch schedule from the FRC API.",
-                    error.response?.data
+                    error.response?.data as object
                 );
             }
 

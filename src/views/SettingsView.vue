@@ -22,7 +22,7 @@ import { ref, onMounted } from 'vue';
 import { functions } from '../firebase.js'
 import { httpsCallable } from 'firebase/functions';
 
-const eventId = ref('MILSTEIN');
+const eventId = ref('2026_Grits_Scout');
 const season = ref('2026');
 
 async function scheduleUpdate() {

@@ -40,7 +40,7 @@ const router = useRouter();
 
 let unsubscribeSchedule = null;
 let unsubscribeAuth = null;
-const eventCode = 'MILSTEIN';
+const eventCode = '2026_Grits_Scout';
 function setupScheduleListener() {
   // Ensure we don't create duplicate listeners if this function is ever called again.
   if (unsubscribeSchedule) unsubscribeSchedule();

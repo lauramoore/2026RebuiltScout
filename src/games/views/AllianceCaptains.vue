@@ -7,7 +7,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const route = useRoute();
-const eventCode = computed(() => route.params.event || 'MILSTEIN');
+const eventCode = computed(() => route.params.event || '2026_Grits_Scout');
 
 const userId = ref(null);
 const allTeams = ref([]);
